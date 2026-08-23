@@ -1,0 +1,2135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bus Elmasry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700;900&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --violet:#5B4FE9;
+    --violet-2:#8A7FFF;
+    --violet-deep:#241E4E;
+    --coral:#FF6A4D;
+    --coral-2:#FFB199;
+    --navy:#211D3B;
+    --navy-2:#2C2554;
+    --navy-3:#5B4FE9;
+    --amber:#FF6A4D;
+    --amber-2:#FFB199;
+    --cream:#F5F3FC;
+    --paper:#FFFFFF;
+    --ink:#211D3B;
+    --ink-soft:#6E6C8A;
+    --ink-faint:#A7A5C0;
+    --line:#EBE8F7;
+    --line-soft:#F3F1FB;
+    --danger:#FF4667;
+    --danger-bg:#FFE7ED;
+    --good:#12B886;
+    --good-bg:#DFF7EE;
+    --radius:20px;
+    --radius-sm:13px;
+    --shadow-sm: 0 2px 10px -4px rgba(91,79,233,.12);
+    --shadow: 0 20px 46px -22px rgba(36,30,78,.28), 0 4px 14px -6px rgba(91,79,233,.12);
+    --shadow-lg: 0 30px 70px -24px rgba(36,30,78,.38);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Cairo', 'Tajawal', sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    min-height:100vh;
+    position:relative;
+    background-image:
+      radial-gradient(760px circle at 92% -6%, rgba(255,106,77,.16), transparent 60%),
+      radial-gradient(900px circle at -8% 12%, rgba(91,79,233,.14), transparent 55%),
+      radial-gradient(700px circle at 50% 115%, rgba(138,127,255,.12), transparent 60%);
+    background-attachment:fixed;
+    background-color:var(--cream);
+  }
+  .mono{font-family:'Space Mono', monospace;}
+
+  @keyframes riseIn{ from{ opacity:0; transform:translateY(12px);} to{ opacity:1; transform:translateY(0);} }
+  @keyframes floatBlob{ 0%,100%{ transform:translate(0,0);} 50%{ transform:translate(-14px,10px);} }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+  }
+
+  .app{display:flex; min-height:100vh;}
+  .sidebar{
+    width:256px; flex-shrink:0;
+    background:
+      radial-gradient(420px circle at 15% 8%, rgba(255,106,77,.30), transparent 60%),
+      radial-gradient(520px circle at 90% 90%, rgba(138,127,255,.30), transparent 55%),
+      linear-gradient(175deg, var(--violet-deep), #1A1638 65%);
+    color:#fff;
+    padding:26px 16px;
+    display:flex; flex-direction:column; gap:5px;
+    position:sticky; top:0; height:100vh;
+    box-shadow: 8px 0 40px -18px rgba(20,16,46,.55);
+  }
+  .brand{display:flex; align-items:center; gap:12px; margin-bottom:26px; padding:0 6px;}
+  .brand-badge{
+    width:44px;height:44px;border-radius:14px;
+    background:linear-gradient(150deg, var(--coral), var(--violet));
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:900; font-size:19px;
+    box-shadow: 0 10px 22px -6px rgba(255,106,77,.5), inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .brand-text{font-weight:800; font-size:16.5px; line-height:1.3; letter-spacing:.2px;}
+  .brand-text span{display:block; font-weight:500; font-size:10.5px; opacity:.55; letter-spacing:.4px; margin-top:2px;}
+
+  .navlink{
+    display:flex; align-items:center; gap:10px;
+    padding:11px 14px; border-radius:13px;
+    color:rgba(255,255,255,.62);
+    cursor:pointer; font-size:14px; font-weight:600;
+    border:1px solid transparent;
+    transition:.18s ease;
+    user-select:none;
+  }
+  .navlink:hover{background:rgba(255,255,255,.07); color:#fff;}
+  .navlink.active{
+    background:linear-gradient(90deg, rgba(255,106,77,.9), rgba(91,79,233,.9));
+    color:#fff;
+    font-weight:700;
+    box-shadow:0 10px 24px -10px rgba(255,106,77,.55);
+  }
+  .navlink .dot{width:5px;height:5px;border-radius:50%;background:currentColor; opacity:.55;}
+  .navlink.active .dot{background:#fff; opacity:1; box-shadow:0 0 0 3px rgba(255,255,255,.25);}
+  .sidebar-foot{margin-top:auto; padding:16px 6px 4px; font-size:11px; color:rgba(255,255,255,.38); border-top:1px solid rgba(255,255,255,.1);}
+
+  .main{flex:1; padding:32px 36px 64px; min-width:0; position:relative;}
+  .topbar{display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-bottom:6px;}
+  .topbar h1{font-size:26px; margin:0 0 6px; font-weight:800; letter-spacing:-.4px; color:var(--ink);}
+  .topbar p{margin:0; color:var(--ink-soft); font-size:13.5px;}
+
+  .road{
+    height:4px; margin:20px 0 28px; border-radius:99px;
+    background:linear-gradient(90deg, var(--coral), var(--violet-2), transparent 92%);
+    opacity:.55;
+  }
+
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(172px,1fr)); gap:16px; margin-bottom:8px;}
+  .stat{
+    background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+    padding:19px 20px; box-shadow:var(--shadow-sm);
+    position:relative; overflow:hidden;
+    animation:riseIn .4s ease both;
+    transition:.2s ease;
+  }
+  .stat::before{
+    content:""; position:absolute; inset-inline-start:0; top:0; bottom:0; width:4px;
+    background:linear-gradient(180deg, var(--violet), var(--violet-2));
+  }
+  .stat:hover{ box-shadow:var(--shadow); transform:translateY(-3px); }
+  .stat .num{font-family:'Space Mono',monospace; font-size:28px; font-weight:700; color:var(--ink); letter-spacing:-.5px;}
+  .stat .lbl{font-size:12px; color:var(--ink-soft); margin-top:5px; font-weight:600;}
+  .stat.amber::before{ background:linear-gradient(180deg, var(--coral), var(--coral-2)); }
+  .stat.amber .num{color:#C8471E;}
+
+  .card{
+    background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow-sm); margin-bottom:18px; overflow:hidden;
+    animation:riseIn .4s ease both;
+    transition:.2s ease;
+  }
+  .card:hover{ box-shadow:var(--shadow); }
+  .card-head{
+    display:flex; align-items:center; justify-content:space-between; padding:18px 22px;
+    border-bottom:1px solid var(--line); gap:10px; flex-wrap:wrap;
+    background:linear-gradient(180deg, #FBFAFE, var(--paper));
+  }
+  .card-head h2{margin:0; font-size:15.5px; font-weight:800; color:var(--ink); letter-spacing:.1px;}
+  .card-body{padding:22px;}
+
+  .btn{border:none; cursor:pointer; font-family:inherit; font-weight:700; font-size:13.5px; padding:10.5px 19px; border-radius:12px; transition:.16s ease; display:inline-flex; align-items:center; gap:6px;}
+  .btn-primary{background:linear-gradient(120deg, var(--violet), #7166F0); color:#fff; box-shadow:0 10px 22px -8px rgba(91,79,233,.55);}
+  .btn-primary:hover{filter:brightness(1.06); transform:translateY(-1px);}
+  .btn-amber{background:linear-gradient(120deg, var(--coral), #FF8A6B); color:#fff; box-shadow:0 10px 22px -8px rgba(255,106,77,.5);}
+  .btn-amber:hover{filter:brightness(1.05); transform:translateY(-1px);}
+  .btn-ghost{background:var(--paper); color:var(--ink-soft); border:1px solid var(--line);}
+  .btn-ghost:hover{background:var(--cream); color:var(--ink); border-color:#DCD7F5;}
+  .btn-danger{background:var(--danger-bg); color:var(--danger);}
+  .btn-danger:hover{background:#ffd6e0;}
+  .btn-sm{padding:7.5px 13px; font-size:12px; border-radius:9px;}
+  .btn:disabled{opacity:.5; cursor:not-allowed; transform:none !important;}
+  .btn:active{transform:translateY(0) scale(.98);}
+
+  .form-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(205px,1fr)); gap:14px;}
+  .field{display:flex; flex-direction:column; gap:6px;}
+  .field label{font-size:11.5px; color:var(--ink-soft); font-weight:700; letter-spacing:.1px;}
+  .field .req{color:var(--danger);}
+  .field input, .field select{padding:10.5px 13px; border:1.5px solid var(--line); border-radius:11px; font-family:inherit; font-size:13.5px; background:#FCFBFF; color:var(--ink); transition:.15s;}
+  .field input:hover, .field select:hover{border-color:#D4CEF5;}
+  .field input:focus, .field select:focus{outline:none; box-shadow:0 0 0 4px rgba(91,79,233,.14); border-color:var(--violet);}
+  .field.check{flex-direction:row; align-items:center; gap:8px; padding-top:20px;}
+  .field.span2{grid-column:span 2;}
+  .hint{font-size:11.5px; color:var(--ink-faint); margin-top:6px;}
+  .error-text{font-size:12px; color:var(--danger); margin-top:10px; display:none; font-weight:600;}
+  .error-text.show{display:block;}
+  .form-actions{display:flex; gap:10px; margin-top:18px; justify-content:flex-end; align-items:center; padding-top:16px; border-top:1px solid var(--line);}
+
+  .table-wrap{overflow-x:auto;}
+  table{width:100%; border-collapse:collapse; font-size:13px; min-width:560px;}
+  th{text-align:right; padding:13px 15px; background:linear-gradient(180deg,#F7F5FE,#F2EFFC); color:var(--ink-soft); font-weight:800; font-size:11px; text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--line); white-space:nowrap;}
+  td{padding:13px 15px; border-bottom:1px solid var(--line-soft); white-space:nowrap;}
+  tbody tr{transition:.12s;}
+  tr:hover td{background:#FAF8FF;}
+  .pill{display:inline-block; padding:4.5px 12px; border-radius:999px; font-size:11px; font-weight:800; letter-spacing:.1px;}
+  .pill.junior{background:#E3EEFF; color:#2255A4;}
+  .pill.kg{background:#FFE9D6; color:#A6570B;}
+  .pill.cover{background:#EDE7FF; color:#5B3FB0;}
+  .pill.grade{background:#EFEAFF; color:#5B4FE9;}
+  .pill.monthly{background:var(--good-bg); color:#0E9A6F;}
+  .pill.term{background:#FFEFD9; color:#A3690A;}
+  .pill.yearly{background:#F0E7FF; color:#7A3FE0;}
+  .row-actions{display:flex; gap:6px;}
+  .search-bar{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .search-bar input, .search-bar select{padding:9.5px 14px; border:1.5px solid var(--line); border-radius:11px; font-family:inherit; font-size:13px; background:#FCFBFF;}
+  .search-bar input:focus, .search-bar select:focus{outline:none; box-shadow:0 0 0 4px rgba(91,79,233,.14); border-color:var(--violet);}
+  .empty{padding:48px 20px; text-align:center; color:var(--ink-soft);}
+  .empty::before{content:"🚌"; display:block; font-size:28px; margin-bottom:10px; opacity:.7;}
+  .empty b{display:block; color:var(--ink); font-size:15px; margin-bottom:4px; font-weight:800;}
+
+  .absence-tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .absence-tag{background:var(--danger-bg); color:var(--danger); font-size:11px; padding:4px 9px; border-radius:8px; display:flex; align-items:center; gap:5px; font-weight:700;}
+  .absence-tag button{background:none;border:none;color:inherit;cursor:pointer;font-weight:900;font-size:12px;line-height:1;}
+
+  .salary-box{background:linear-gradient(150deg,#F7F5FE,#F1EEFC); border:1.5px dashed #D4CEF5; border-radius:16px; padding:16px 18px; margin-top:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;}
+  .salary-box .calc{font-size:12px; color:var(--ink-soft);}
+
+  .family-card{
+    border:1px solid var(--line); border-radius:var(--radius); margin-bottom:18px; overflow:hidden;
+    background:var(--paper); box-shadow:var(--shadow-sm); transition:.2s ease; animation:riseIn .4s ease both;
+  }
+  .family-card:hover{ box-shadow:var(--shadow); }
+  .family-head{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:19px 22px; background:linear-gradient(180deg, #FBFAFE, var(--paper)); border-bottom:1px solid var(--line); flex-wrap:wrap;}
+  .family-info b{font-size:16.5px; color:var(--ink); font-weight:800;}
+  .family-meta{display:flex; gap:14px; flex-wrap:wrap; margin-top:8px; font-size:12.5px; color:var(--ink-soft);}
+  .family-stats{display:flex; gap:20px; align-items:center;}
+  .family-stats .fs-num{font-family:'Space Mono',monospace; font-weight:700; font-size:17px; color:var(--violet);}
+  .family-stats .fs-lbl{font-size:10.5px; color:var(--ink-faint); font-weight:600;}
+  .family-actions{display:flex; gap:6px;}
+  .family-body{padding:18px 22px 22px;}
+
+  .toast{position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 24px; border-radius:13px; font-size:13px; font-weight:600; box-shadow:0 20px 44px rgba(20,16,46,.35); z-index:50; opacity:0; pointer-events:none; transition:.25s;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
+  .toast.err{background:var(--danger);}
+
+  .loading{padding:48px; text-align:center; color:var(--ink-soft); font-weight:600;}
+  .grade-price-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px;}
+  .grade-price-item{display:flex; flex-direction:column; gap:5px; background:#FBFAFF; border:1.5px solid var(--line); border-radius:12px; padding:11px 12px; transition:.15s;}
+  .grade-price-item:hover{border-color:var(--violet-2);}
+  .grade-price-item label{font-size:11.5px; font-weight:700; color:var(--ink-soft);}
+  .grade-price-item input{border:1.5px solid var(--line); border-radius:8px; padding:7px 9px; font-family:'Space Mono',monospace; font-size:13px;}
+
+  .login-screen{
+    position:fixed; inset:0;
+    background:
+      radial-gradient(680px circle at 18% 20%, rgba(255,106,77,.35), transparent 55%),
+      radial-gradient(760px circle at 85% 80%, rgba(138,127,255,.4), transparent 55%),
+      linear-gradient(160deg, var(--violet-deep), #17132F);
+    display:none; align-items:center; justify-content:center; z-index:100; padding:20px;
+  }
+  .login-card{
+    background:var(--paper); border-radius:26px; padding:38px 30px; width:100%; max-width:360px;
+    box-shadow:0 40px 90px rgba(10,8,26,.5); text-align:center; position:relative;
+    border:1px solid rgba(255,255,255,.6);
+  }
+  .login-card::before{
+    content:""; position:absolute; inset-inline:0; top:0; height:5px; border-radius:26px 26px 0 0;
+    background:linear-gradient(90deg, var(--coral), var(--violet));
+  }
+  .login-card .brand-badge{width:56px;height:56px;border-radius:16px;background:linear-gradient(150deg, var(--coral), var(--violet));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:26px;margin:8px auto 16px; box-shadow:0 14px 30px -8px rgba(91,79,233,.5);}
+  .login-card h2{margin:0 0 4px; font-size:21px; font-weight:800; color:var(--ink);}
+  .login-card p{margin:0 0 24px; color:var(--ink-soft); font-size:13px;}
+  .login-card input{width:100%; text-align:center; font-family:'Space Mono',monospace; font-size:22px; letter-spacing:8px; padding:14px; border:1.5px solid var(--line); border-radius:13px; margin-bottom:16px; background:#FCFBFF; transition:.15s;}
+  .login-card input:focus{outline:none; box-shadow:0 0 0 4px rgba(91,79,233,.16); border-color:var(--violet);}
+  .login-card .btn{width:100%; justify-content:center; padding:13px;}
+  .login-card .error-text{margin-top:12px;}
+  .role-tag{font-size:10.5px; padding:2px 10px; border-radius:999px; background:rgba(91,79,233,.15); color:var(--violet); display:inline-block; margin-inline-start:6px; font-weight:700;}
+  .pill.role-admin{background:#EDE7FF; color:#5B3FB0;}
+  .pill.role-supervisor{background:#FFE9D6; color:#B0570B;}
+  .pill.role-driver{background:#E3EEFF; color:#2255A4;}
+  .status-btns{display:flex; gap:6px;}
+
+  .report-nav{display:flex; gap:8px; flex-wrap:wrap; margin:4px 0 18px;}
+
+  @media (max-width: 820px){
+    .app{flex-direction:column;}
+    .sidebar{width:100%; height:auto; position:relative; flex-direction:row; overflow-x:auto; padding:14px;}
+    .brand{margin-bottom:0;}
+    .sidebar-foot{display:none;}
+    .navlink{white-space:nowrap;}
+    .main{padding:20px 16px 54px;}
+  }
+  :focus-visible{outline:2px solid var(--violet); outline-offset:2px;}
+
+  @media print{
+    .sidebar, .btn, .search-bar, .report-nav{ display:none !important; }
+    body{ background:#fff !important; }
+    .app{ display:block !important; }
+    .main{ padding:0 !important; }
+    .card{ box-shadow:none !important; border:1px solid #ccc !important; break-inside:avoid; }
+    .stat{ box-shadow:none !important; border:1px solid #ccc !important; }
+    th{ background:#eee !important; color:#000 !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app" style="display:none;">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-badge">🚌</div>
+      <div class="brand-text">Bus Elmasry<span>إدارة نقل الطلاب</span></div>
+    </div>
+    <div class="navlink active" data-tab="dashboard" data-roles="admin,supervisor,driver"><span class="dot"></span> الرئيسية</div>
+    <div class="navlink" data-tab="attendance" data-roles="admin,supervisor,driver"><span class="dot"></span> الحضور اليومي</div>
+    <div class="navlink" data-tab="reports" data-roles="admin"><span class="dot"></span> التقارير</div>
+    <div class="navlink" data-tab="parents" data-roles="admin"><span class="dot"></span> أولياء الأمور</div>
+    <div class="navlink" data-tab="drivers" data-roles="admin"><span class="dot"></span> السواقين</div>
+    <div class="navlink" data-tab="supervisors" data-roles="admin"><span class="dot"></span> المشرفين</div>
+    <div class="navlink" data-tab="staff" data-roles="admin"><span class="dot"></span> فريق العمل والدخول</div>
+    <div class="navlink" data-tab="settings" data-roles="admin"><span class="dot"></span> خطوط السير والإعدادات</div>
+    <div class="sidebar-foot" id="sidebarFoot"></div>
+  </aside>
+
+  <main class="main" id="main">
+  </main>
+</div>
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="brand-badge">🚌</div>
+    <h2>Bus Elmasry</h2>
+    <p>سجّل دخولك بالرقم السري الخاص بك</p>
+    <input id="pinInput" inputmode="numeric" maxlength="6" placeholder="••••">
+    <button class="btn btn-primary" id="loginBtn">دخول</button>
+    <div class="error-text" id="loginError"></div>
+  </div>
+</div>
+
+<div class="loading" id="loading">جارِ الاتصال بالنظام...</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+/* =========================================================
+   FIREBASE
+========================================================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyBTQx8Y1Mx4DXPIweokVnA1KcwpvELNMGQ",
+  authDomain: "student-transport-df97d.firebaseapp.com",
+  projectId: "student-transport-df97d",
+  storageBucket: "student-transport-df97d.firebasestorage.app",
+  messagingSenderId: "458912338663",
+  appId: "1:458912338663:web:85dac629309c74d2c58842"
+};
+let db;
+function initFirebase(){
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+}
+
+/* =========================================================
+   STATE
+========================================================= */
+let STATE = { routes: [], parents: [], drivers: [], supervisors: [], staff: [], settings: { standardDays: 22, gradePrices: {}, alertDays: 5 } };
+let ACTIVE_TAB = 'dashboard';
+let currentUser = null;
+let APP_READY = false;
+let attendanceState = { date: null, records: {}, routeFilter: '' };
+
+// form UI state
+let reportsState = { view:'route', routeId:'', studentId:'', month:'', duesMonth:'', duesPlan:'', date:'', dateRecords:{} };
+let familyForm = { open:false, id:null };
+let studentForm = { open:false, familyId:null, studentId:null };
+let renewForm = { open:false, familyId:null, studentId:null };
+let driverForm = { open:false, id:null };
+let supForm = { open:false, id:null };
+let routeForm = { open:false, id:null };
+let staffForm = { open:false, id:null };
+
+const GRADES = [
+  'Play','KG1','KG2',
+  'Junior 1','Junior 2','Junior 3','Junior 4','Junior 5','Junior 6',
+  'Middle 1','Middle 2','Middle 3',
+  'Senior 1','Senior 2','Senior 3'
+];
+const TYPES = [ {v:'جونيور', c:'junior'}, {v:'كيجي', c:'kg'}, {v:'تغطيات', c:'cover'} ];
+const PLANS = [ {v:'شهري', c:'monthly'}, {v:'ترم', c:'term'}, {v:'سنوي', c:'yearly'} ];
+const DEFAULT_ROUTE_NAMES = ['بيطاش', 'دخيلة', 'ورديان'];
+
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function thisMonthKey(){ return new Date().toISOString().slice(0,7); }
+function fmt(n){ n = Number(n)||0; return n.toLocaleString('ar-EG'); }
+function esc(s){ return (s===undefined||s===null)?'':String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function toast(msg, isErr){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.toggle('err', !!isErr);
+  t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+/* =========================================================
+   STORAGE (Firestore) — كل مفتاح متخزن كمستند واحد في collection "state"
+   ومربوط بمستمع لحظي (onSnapshot) عشان أي تعديل من أي جهاز يظهر فورًا
+========================================================= */
+const STATE_KEYS = ['routes','parents','drivers','supervisors','staff','settings'];
+
+function anyFormOpen(){
+  return familyForm.open || studentForm.open || driverForm.open || supForm.open || routeForm.open || staffForm.open || renewForm.open;
+}
+
+async function saveKey(key){
+  try{
+    await db.collection('state').doc(key).set({ value: STATE[key] });
+    return true;
+  }catch(e){
+    console.error('Firestore save error', e);
+    toast('حدث خطأ أثناء الحفظ، تأكد من اتصال الإنترنت', true);
+    return false;
+  }
+}
+
+async function loadAll(){
+  try{
+    for(const k of STATE_KEYS){
+      if(k==='staff') continue; // تم تحميلها بالفعل قبل الدخول
+      const snap = await db.collection('state').doc(k).get();
+      if(snap.exists && snap.data().value!==undefined){ STATE[k] = snap.data().value; }
+    }
+  }catch(e){
+    console.error('Firestore load error', e);
+    toast('تعذر تحميل البيانات، تأكد من اتصال الإنترنت', true);
+  }
+
+  if(!STATE.routes || STATE.routes.length===0){
+    STATE.routes = DEFAULT_ROUTE_NAMES.map(name=>({id:uid(), name, priceJunior:0, priceKG:0, priceCoverage:0}));
+    await saveKey('routes');
+  }
+  if(!STATE.settings) STATE.settings = { standardDays:22, gradePrices:{}, alertDays:5 };
+  if(!STATE.settings.gradePrices) STATE.settings.gradePrices = {};
+  if(STATE.settings.alertDays===undefined || STATE.settings.alertDays===null) STATE.settings.alertDays = 5;
+  if(!STATE.parents) STATE.parents = [];
+  if(!STATE.drivers) STATE.drivers = [];
+  if(!STATE.supervisors) STATE.supervisors = [];
+
+  // تأكيد وجود مصفوفة مدفوعات لكل طالب (توافق مع بيانات قديمة قبل إضافة تتبع الدفع)
+  let paymentsMigrated = false;
+  (STATE.parents||[]).forEach(f=>{
+    (f.students||[]).forEach(s=>{
+      if(!s.payments){ s.payments = []; paymentsMigrated = true; }
+    });
+  });
+  if(paymentsMigrated) await saveKey('parents');
+
+  // migrate legacy flat "parents" records (old version: one row per student) into family/students shape
+  if(STATE.parents && STATE.parents.length && !('students' in STATE.parents[0])){
+    const byFamily = {};
+    STATE.parents.forEach(old=>{
+      const key = (old.parentName||'')+'|'+(old.fatherPhone||'')+'|'+(old.address||'');
+      if(!byFamily[key]){
+        byFamily[key] = { id: uid(), parentName: old.parentName||'', fatherPhone: old.fatherPhone||'', motherPhone: old.motherPhone||'', address: old.address||'', students: [] };
+      }
+      byFamily[key].students.push({
+        id: old.id || uid(), name: old.student||'', grade: old.grade||'', routeId: old.routeId||'',
+        plan: old.plan||'شهري', price: Number(old.price)||0, standardDays: Number(old.standardDays)||STATE.settings.standardDays,
+        absences: old.absences||[]
+      });
+    });
+    STATE.parents = Object.values(byFamily);
+    await saveKey('parents');
+  }
+
+  // مستمعات لحظية: أي تعديل من جهاز تاني يحدّث الشاشة تلقائيًا (إلا لو فيه نموذج مفتوح دلوقتي)
+  STATE_KEYS.forEach(k=>{
+    db.collection('state').doc(k).onSnapshot(snap=>{
+      if(!snap.exists) return;
+      const val = snap.data().value;
+      if(val===undefined) return;
+      STATE[k] = val;
+      if(APP_READY && !anyFormOpen()) render();
+    });
+  });
+
+  document.getElementById('loading').remove();
+  APP_READY = true;
+  applyRoleUI();
+  render();
+}
+
+/* =========================================================
+   AUTH (دخول برقم سري بسيط لكل عضو فريق)
+========================================================= */
+function roleLabel(r){ return r==='admin' ? 'مدير' : r==='supervisor' ? 'مشرف' : r==='driver' ? 'سواق' : r; }
+
+function getSession(){
+  try{ return JSON.parse(localStorage.getItem('transport_session')||'null'); }catch(e){ return null; }
+}
+function setSession(id){ localStorage.setItem('transport_session', JSON.stringify({id})); }
+function clearSession(){ localStorage.removeItem('transport_session'); }
+
+async function boot(){
+  try{ initFirebase(); }
+  catch(e){
+    console.error(e);
+    document.getElementById('loading').textContent = 'تعذر الاتصال بقاعدة البيانات. تأكد من الإنترنت وحدّث الصفحة.';
+    return;
+  }
+  try{
+    const snap = await db.collection('state').doc('staff').get();
+    STATE.staff = (snap.exists && snap.data().value) ? snap.data().value : [];
+  }catch(e){
+    console.error(e);
+    document.getElementById('loading').textContent = 'تعذر الاتصال بقاعدة البيانات. تأكد من الإنترنت وحدّث الصفحة.';
+    return;
+  }
+  if(!STATE.staff || STATE.staff.length===0){
+    STATE.staff = [{ id: uid(), name:'المدير', role:'admin', pin:'1234', routeId:'' }];
+    await saveKey('staff');
+  }
+
+  const session = getSession();
+  if(session){
+    const found = STATE.staff.find(s=>s.id===session.id);
+    if(found){ await enterApp(found); return; }
+    clearSession();
+  }
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('pinInput').focus();
+}
+
+async function enterApp(staffMember){
+  currentUser = staffMember;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('loading').style.display = 'block';
+  ACTIVE_TAB = currentUser.role==='admin' ? 'dashboard' : 'dashboard';
+  attendanceState.date = todayISO();
+  reportsState.date = todayISO();
+  reportsState.month = thisMonthKey();
+  reportsState.duesMonth = thisMonthKey();
+  await loadAll();
+}
+
+async function doLogin(){
+  const pin = document.getElementById('pinInput').value.trim();
+  const err = document.getElementById('loginError');
+  if(!pin){ err.textContent='من فضلك اكتب الرقم السري'; err.classList.add('show'); return; }
+  const found = STATE.staff.find(s=>String(s.pin)===pin);
+  if(!found){ err.textContent='الرقم السري غير صحيح'; err.classList.add('show'); return; }
+  err.classList.remove('show');
+  setSession(found.id);
+  await enterApp(found);
+}
+
+function logout(){
+  if(!confirm('تسجيل الخروج؟')) return;
+  clearSession();
+  location.reload();
+}
+
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('pinInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') doLogin(); });
+
+function applyRoleUI(){
+  document.querySelectorAll('.navlink').forEach(n=>{
+    const roles = (n.dataset.roles||'').split(',');
+    n.style.display = roles.includes(currentUser.role) ? '' : 'none';
+  });
+  const allowedTabs = Array.from(document.querySelectorAll('.navlink')).filter(n=>n.style.display!=='none').map(n=>n.dataset.tab);
+  if(!allowedTabs.includes(ACTIVE_TAB)) ACTIVE_TAB = allowedTabs[0] || 'dashboard';
+  document.getElementById('sidebarFoot').innerHTML = `
+    <div style="margin-bottom:8px;"><b>${esc(currentUser.name)}</b><span class="role-tag">${roleLabel(currentUser.role)}</span></div>
+    <button class="btn btn-ghost btn-sm" data-action="logout" style="width:100%; justify-content:center;">تسجيل الخروج</button>`;
+}
+
+/* =========================================================
+   HELPERS
+========================================================= */
+function routeById(id){ return STATE.routes.find(r=>r.id===id); }
+function routeName(id){ const r = routeById(id); return r ? r.name : '—'; }
+function priceForType(route, type){
+  if(!route) return 0;
+  if(type==='جونيور') return Number(route.priceJunior)||0;
+  if(type==='كيجي') return Number(route.priceKG)||0;
+  return Number(route.priceCoverage)||0;
+}
+function calcSalary(routeId, type, workDays){
+  const route = routeById(routeId);
+  const base = priceForType(route, type);
+  const std = Number(STATE.settings.standardDays)||22;
+  const days = Number(workDays)||0;
+  return Math.round((base * (days/std)) * 100)/100;
+}
+function allStudentsFlat(){
+  const list = [];
+  STATE.parents.forEach(f=>(f.students||[]).forEach(s=>list.push({...s, family:f})));
+  return list;
+}
+
+/* ---- تتبع الدفع والاشتراكات ---- */
+function daysBetween(dateA, dateB){
+  return Math.floor((new Date(dateB) - new Date(dateA)) / 86400000);
+}
+function addMonthsISO(dateStr, n){
+  const d = dateStr ? new Date(dateStr) : new Date();
+  d.setMonth(d.getMonth()+n);
+  return d.toISOString().slice(0,10);
+}
+function latestPayment(s){
+  const list = s.payments || [];
+  if(!list.length) return null;
+  return list.reduce((a,b)=> (a.to > b.to ? a : b));
+}
+function subscriptionInfo(s){
+  const alertDays = Number(STATE.settings.alertDays)||5;
+  const p = latestPayment(s);
+  if(!p) return { status:'none', daysLeft:null, payment:null };
+  const daysLeft = daysBetween(todayISO(), p.to);
+  let status;
+  if(daysLeft < 0) status = 'expired';
+  else if(daysLeft <= alertDays) status = 'expiring';
+  else status = 'active';
+  return { status, daysLeft, payment:p };
+}
+function subStatusPill(info){
+  if(info.status==='none') return `<span class="pill" style="background:#eee; color:#7a7a7a;">بدون اشتراك مسجل</span>`;
+  if(info.status==='expired') return `<span class="pill" style="background:var(--danger-bg); color:var(--danger);">منتهي منذ ${Math.abs(info.daysLeft)} يوم</span>`;
+  if(info.status==='expiring') return `<span class="pill" style="background:#FFF1D6; color:#9C6A00;">ينتهي خلال ${info.daysLeft} يوم</span>`;
+  return `<span class="pill" style="background:var(--good-bg); color:var(--good);">نشط — متبقي ${info.daysLeft} يوم</span>`;
+}
+function allSubscriptionAlerts(){
+  return allStudentsFlat()
+    .map(s=>({...s, sub:subscriptionInfo(s)}))
+    .filter(s=>s.sub.status==='expired' || s.sub.status==='expiring')
+    .sort((a,b)=>(a.sub.daysLeft??0)-(b.sub.daysLeft??0));
+}
+
+/* =========================================================
+   ROOT RENDER
+========================================================= */
+function render(){
+  document.querySelectorAll('.navlink').forEach(n=>{
+    n.classList.toggle('active', n.dataset.tab === ACTIVE_TAB);
+  });
+  const main = document.getElementById('main');
+  const adminOnly = ['parents','drivers','supervisors','settings','staff','reports'];
+  if(adminOnly.includes(ACTIVE_TAB) && currentUser.role!=='admin'){ ACTIVE_TAB = 'dashboard'; }
+
+  if(ACTIVE_TAB==='dashboard') main.innerHTML = renderDashboard();
+  else if(ACTIVE_TAB==='attendance') main.innerHTML = renderAttendance();
+  else if(ACTIVE_TAB==='parents') main.innerHTML = renderParents();
+  else if(ACTIVE_TAB==='drivers') main.innerHTML = renderDrivers();
+  else if(ACTIVE_TAB==='supervisors') main.innerHTML = renderSupervisors();
+  else if(ACTIVE_TAB==='staff') main.innerHTML = renderStaff();
+  else if(ACTIVE_TAB==='settings') main.innerHTML = renderSettings();
+  else if(ACTIVE_TAB==='reports') main.innerHTML = renderReports();
+  syncSalaryPreview();
+}
+
+document.querySelectorAll('.navlink').forEach(n=>{
+  n.addEventListener('click', async ()=>{
+    ACTIVE_TAB = n.dataset.tab;
+    if(ACTIVE_TAB==='attendance'){
+      document.getElementById('main').innerHTML = '<div class="loading">جارِ تحميل بيانات الحضور...</div>';
+      await loadAttendanceForDate(attendanceState.date);
+    }
+    if(ACTIVE_TAB==='reports' && reportsState.view==='date'){
+      document.getElementById('main').innerHTML = '<div class="loading">جارِ تحميل بيانات التقرير...</div>';
+      await loadDateReport(reportsState.date);
+    }
+    render();
+  });
+});
+
+function emptyState(title, sub){ return `<div class="empty"><b>${title}</b>${sub}</div>`; }
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+function renderDashboard(){
+  if(currentUser.role!=='admin') return renderDashboardStaff();
+  const students = allStudentsFlat();
+  const totalStudents = students.length;
+  const totalRevenue = students.reduce((s,st)=>s+(Number(st.price)||0),0);
+  const totalDrivers = STATE.drivers.length;
+  const totalSupervisors = STATE.supervisors.length;
+  const totalPayroll = STATE.drivers.reduce((s,d)=>s+(Number(d.finalSalary)||0),0)
+                      + STATE.supervisors.reduce((s,su)=>s+(Number(su.finalSalary)||0),0);
+  const recent = students.slice(-5).reverse();
+  const alerts = allSubscriptionAlerts();
+  const expiredCount = alerts.filter(a=>a.sub.status==='expired').length;
+  const expiringCount = alerts.filter(a=>a.sub.status==='expiring').length;
+
+  return `
+    <div class="topbar">
+      <div>
+        <h1>نظرة عامة</h1>
+        <p>ملخص سريع لحالة النقل اليوم — ${new Date().toLocaleDateString('ar-EG',{weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p>
+      </div>
+    </div>
+    <div class="road"></div>
+    <div class="stats">
+      <div class="stat"><div class="num">${fmt(totalStudents)}</div><div class="lbl">إجمالي عدد الطلاب</div></div>
+      <div class="stat"><div class="num">${fmt(STATE.parents.length)}</div><div class="lbl">عدد العائلات</div></div>
+      <div class="stat amber"><div class="num">${fmt(totalRevenue)}</div><div class="lbl">إجمالي الاشتراكات الشهرية (ج.م)</div></div>
+      <div class="stat"><div class="num">${fmt(totalDrivers)}</div><div class="lbl">عدد السواقين</div></div>
+      <div class="stat"><div class="num">${fmt(totalSupervisors)}</div><div class="lbl">عدد المشرفين</div></div>
+      <div class="stat amber"><div class="num">${fmt(totalPayroll)}</div><div class="lbl">إجمالي مرتبات السواقين والمشرفين (ج.م)</div></div>
+    </div>
+
+    ${alerts.length>0 ? `
+    <div class="card" style="margin-top:20px; border-color:${expiredCount>0?'#e3b3a8':'#ecd39a'};">
+      <div class="card-head">
+        <h2>⚠️ تنبيهات الاشتراكات (${alerts.length})</h2>
+        <div style="display:flex; gap:8px;">
+          ${expiredCount>0?`<span class="pill" style="background:var(--danger-bg); color:var(--danger);">${expiredCount} منتهي</span>`:''}
+          ${expiringCount>0?`<span class="pill" style="background:#FFF1D6; color:#9C6A00;">${expiringCount} قارب على الانتهاء</span>`:''}
+        </div>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <div class="table-wrap"><table>
+          <thead><tr><th>الطالب</th><th>ولي الأمر</th><th>تلفون</th><th>خط السير</th><th>الحالة</th></tr></thead>
+          <tbody>
+          ${alerts.slice(0,15).map(s=>`
+            <tr>
+              <td><b>${esc(s.name)}</b></td>
+              <td>${esc(s.family.parentName)}</td>
+              <td class="mono">${esc(s.family.fatherPhone||s.family.motherPhone||'—')}</td>
+              <td>${esc(routeName(s.routeId))}</td>
+              <td>${subStatusPill(s.sub)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table></div>
+      </div>
+    </div>` : ''}
+
+    <div class="card" style="margin-top:20px;">
+      <div class="card-head"><h2>آخر الطلاب المضافين</h2></div>
+      <div class="card-body">
+        ${recent.length===0 ? emptyState('لا يوجد طلاب بعد','ابدأ بإضافة عائلة وطالب من تبويب "أولياء الأمور"') :
+        `<div class="table-wrap"><table>
+          <thead><tr><th>الطالب</th><th>ولي الأمر</th><th>المرحلة</th><th>خط السير</th><th>الاشتراك</th></tr></thead>
+          <tbody>
+          ${recent.map(s=>`
+            <tr>
+              <td>${esc(s.name)}</td>
+              <td>${esc(s.family.parentName)}</td>
+              <td>${esc(s.grade)}</td>
+              <td>${esc(routeName(s.routeId))}</td>
+              <td class="mono">${fmt(s.price)} ج.م</td>
+            </tr>`).join('')}
+          </tbody>
+        </table></div>`}
+      </div>
+    </div>
+  `;
+}
+
+function renderDashboardStaff(){
+  const myRoute = routeById(currentUser.routeId);
+  const students = allStudentsFlat().filter(s=>s.routeId===currentUser.routeId);
+  return `
+    <div class="topbar">
+      <div>
+        <h1>أهلًا ${esc(currentUser.name)}</h1>
+        <p>خط السير: ${myRoute?esc(myRoute.name):'لم يُحدد خط سير بعد — كلّم المدير'} — ${new Date().toLocaleDateString('ar-EG',{weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p>
+      </div>
+    </div>
+    <div class="road"></div>
+    <div class="stats">
+      <div class="stat"><div class="num">${fmt(students.length)}</div><div class="lbl">عدد طلاب الخط</div></div>
+    </div>
+    <div class="card" style="margin-top:20px;">
+      <div class="card-head"><h2>طلاب خط السير</h2></div>
+      <div class="card-body">
+        ${students.length===0 ? emptyState('لا يوجد طلاب على هذا الخط بعد','') :
+        `<div class="table-wrap"><table>
+          <thead><tr><th>الطالب</th><th>ولي الأمر</th><th>المرحلة</th></tr></thead>
+          <tbody>
+          ${students.map(s=>`
+            <tr>
+              <td>${esc(s.name)}</td>
+              <td>${esc(s.family.parentName)}</td>
+              <td>${esc(s.grade)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table></div>`}
+      </div>
+    </div>
+    <div class="hint" style="margin-top:14px;">لتسجيل الحضور والغياب اليومي، روح لتبويب "الحضور اليومي".</div>
+  `;
+}
+
+/* =========================================================
+   ATTENDANCE (الحضور اليومي)
+========================================================= */
+async function loadAttendanceForDate(date){
+  attendanceState.date = date;
+  attendanceState.records = {};
+  try{
+    const snap = await db.collection('attendance').where('date','==',date).get();
+    snap.forEach(doc=>{ attendanceState.records[doc.data().studentId] = doc.data(); });
+  }catch(e){
+    console.error(e);
+    toast('تعذر تحميل بيانات الحضور، تأكد من الإنترنت', true);
+  }
+}
+
+async function setAttendance(studentId, familyId, routeId, status){
+  const date = attendanceState.date;
+  const docId = date+'__'+studentId;
+  const rec = { date, studentId, familyId, routeId, status, markedBy: currentUser.name, markedByRole: currentUser.role, markedAt: new Date().toISOString() };
+  try{
+    await db.collection('attendance').doc(docId).set(rec);
+    attendanceState.records[studentId] = rec;
+    const fam = STATE.parents.find(f=>f.id===familyId);
+    const st = fam && fam.students.find(s=>s.id===studentId);
+    if(st){
+      st.absences = st.absences||[];
+      const has = st.absences.includes(date);
+      if(status==='absent' && !has) st.absences.push(date);
+      if(status!=='absent' && has) st.absences = st.absences.filter(d=>d!==date);
+      await saveKey('parents');
+    }
+    toast(status==='present' ? 'تم تسجيل الحضور' : 'تم تسجيل الغياب');
+    render();
+  }catch(e){
+    console.error(e);
+    toast('تعذر الحفظ، تأكد من اتصال الإنترنت', true);
+  }
+}
+
+function renderAttendance(){
+  const isAdmin = currentUser.role==='admin';
+  const routeOptions = STATE.routes.map(r=>`<option value="${r.id}" ${attendanceState.routeFilter===r.id?'selected':''}>${esc(r.name)}</option>`).join('');
+  const scopedRouteId = isAdmin ? attendanceState.routeFilter : currentUser.routeId;
+
+  let students = allStudentsFlat();
+  if(scopedRouteId) students = students.filter(s=>s.routeId===scopedRouteId);
+  else if(!isAdmin) students = [];
+
+  const presentCount = students.filter(s=>attendanceState.records[s.id]?.status==='present').length;
+  const absentCount = students.filter(s=>attendanceState.records[s.id]?.status==='absent').length;
+  const unmarkedCount = students.length - presentCount - absentCount;
+
+  const rows = students.map(s=>{
+    const rec = attendanceState.records[s.id];
+    const status = rec ? rec.status : null;
+    return `
+    <tr>
+      <td><b>${esc(s.name)}</b></td>
+      <td>${esc(s.family.parentName)}</td>
+      <td class="mono">${esc(s.family.fatherPhone||s.family.motherPhone||'—')}</td>
+      ${isAdmin && !scopedRouteId ? `<td>${esc(routeName(s.routeId))}</td>` : ''}
+      <td class="status-btns">
+        <button class="btn btn-sm ${status==='present'?'btn-primary':'btn-ghost'}" data-action="markPresent" data-student="${s.id}" data-family="${s.family.id}" data-route="${s.routeId}">حاضر</button>
+        <button class="btn btn-sm ${status==='absent'?'btn-danger':'btn-ghost'}" data-action="markAbsentToday" data-student="${s.id}" data-family="${s.family.id}" data-route="${s.routeId}">غايب</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div class="topbar">
+    <div><h1>الحضور اليومي</h1><p>سجّل حضور وغياب كل طالب — يتحدّث فورًا لباقي الفريق</p></div>
+  </div>
+  <div class="road"></div>
+  <div class="card"><div class="card-body" style="padding:14px 18px;">
+    <div class="search-bar">
+      <input type="date" id="attendanceDate" value="${attendanceState.date}">
+      ${isAdmin ? `<select id="attendanceRouteFilter"><option value="">كل الخطوط</option>${routeOptions}</select>` : `<span class="pill grade">${esc(routeName(currentUser.routeId))}</span>`}
+    </div>
+  </div></div>
+  <div class="stats">
+    <div class="stat"><div class="num">${fmt(presentCount)}</div><div class="lbl">حاضر</div></div>
+    <div class="stat"><div class="num">${fmt(absentCount)}</div><div class="lbl">غايب</div></div>
+    <div class="stat amber"><div class="num">${fmt(unmarkedCount)}</div><div class="lbl">لم يُسجل بعد</div></div>
+  </div>
+  <div class="card">
+    <div class="card-body" style="padding:0;">
+      ${students.length===0 ? emptyState('لا يوجد طلاب لعرضهم', !isAdmin && !currentUser.routeId ? 'لم يتم تحديد خط سير لك بعد — كلّم المدير' : 'اختر خط سير لعرض طلابه') : `
+      <div class="table-wrap"><table>
+      <thead><tr><th>الطالب</th><th>ولي الأمر</th><th>تلفون</th>${isAdmin && !scopedRouteId ? '<th>الخط</th>' : ''}<th>الحالة</th></tr></thead>
+      <tbody>${rows}</tbody>
+      </table></div>`}
+    </div>
+  </div>
+  `;
+}
+
+/* =========================================================
+   PARENTS / FAMILIES
+========================================================= */
+function renderParents(){
+  const routeOptions = STATE.routes.map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join('');
+  const fe = familyForm.id ? STATE.parents.find(f=>f.id===familyForm.id) : null;
+
+  const families = STATE.parents;
+
+  return `
+    <div class="topbar">
+      <div>
+        <h1>أولياء الأمور والطلاب</h1>
+        <p>كل عائلة كارت واحد — يمكن إضافة أكثر من طالب لنفس ولي الأمر، ولكل طالب مرحلته وحضوره وخط سيره</p>
+      </div>
+      <button class="btn btn-amber" data-action="toggleFamilyForm">${familyForm.open ? 'إغلاق النموذج' : '+ إضافة عائلة'}</button>
+    </div>
+    <div class="road"></div>
+
+    ${familyForm.open ? `
+    <div class="card">
+      <div class="card-head"><h2>${fe?'تعديل بيانات ولي الأمر':'بيانات ولي أمر جديد'}</h2></div>
+      <div class="card-body">
+        <form id="familyFormEl" data-form-type="family" data-id="${fe?fe.id:''}" novalidate onsubmit="return false;">
+          <div class="form-grid">
+            <div class="field"><label>اسم ولي الأمر <span class="req">*</span></label><input name="parentName" value="${esc(fe?.parentName||'')}"></div>
+            <div class="field"><label>رقم تلفون الأب</label><input name="fatherPhone" value="${esc(fe?.fatherPhone||'')}" inputmode="tel"></div>
+            <div class="field"><label>رقم تلفون الأم</label><input name="motherPhone" value="${esc(fe?.motherPhone||'')}" inputmode="tel"></div>
+            <div class="field span2"><label>العنوان</label><input name="address" value="${esc(fe?.address||'')}"></div>
+          </div>
+          <div class="error-text" id="familyFormError"></div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" data-action="cancelFamilyForm">إلغاء</button>
+            <button type="button" class="btn btn-primary" data-action="saveFamily">${fe?'حفظ التعديلات':'إضافة ولي الأمر'}</button>
+          </div>
+        </form>
+      </div>
+    </div>` : ''}
+
+    <div class="card">
+      <div class="card-body" style="padding:14px 18px;">
+        <div class="search-bar">
+          <input id="parentSearch" placeholder="بحث باسم الطالب أو ولي الأمر...">
+          <select id="parentFilterRoute"><option value="">كل الخطوط</option>${routeOptions}</select>
+        </div>
+      </div>
+    </div>
+
+    <div id="familiesList">
+      ${families.length===0 ? `<div class="card"><div class="card-body">${emptyState('لا يوجد أولياء أمور بعد','اضغط "إضافة عائلة" للبدء')}</div></div>` :
+        families.map(f=>renderFamilyCard(f)).join('')}
+    </div>
+  `;
+}
+
+function renderFamilyCard(f){
+  const students = f.students||[];
+  const totalPrice = students.reduce((s,st)=>s+(Number(st.price)||0),0);
+  const isAddingHere = studentForm.open && studentForm.familyId===f.id && !studentForm.studentId;
+  const editingStudent = studentForm.open && studentForm.familyId===f.id && studentForm.studentId
+      ? students.find(s=>s.id===studentForm.studentId) : null;
+  const showStudentForm = isAddingHere || !!editingStudent;
+  const renewingStudent = renewForm.open && renewForm.familyId===f.id
+      ? students.find(s=>s.id===renewForm.studentId) : null;
+
+  const nameBlob = (f.parentName+' '+students.map(s=>s.name).join(' ')).toLowerCase();
+  const routeBlob = students.map(s=>s.routeId).join(',');
+
+  return `
+  <div class="family-card" data-family-id="${f.id}" data-name="${esc(nameBlob)}" data-routes="${esc(routeBlob)}">
+    <div class="family-head">
+      <div class="family-info">
+        <b>${esc(f.parentName)||'بدون اسم'}</b>
+        <div class="family-meta">
+          ${f.fatherPhone?`<span>📞 الأب: ${esc(f.fatherPhone)}</span>`:''}
+          ${f.motherPhone?`<span>📞 الأم: ${esc(f.motherPhone)}</span>`:''}
+          ${f.address?`<span>📍 ${esc(f.address)}</span>`:''}
+        </div>
+      </div>
+      <div class="family-stats">
+        <div><div class="fs-num">${students.length}</div><div class="fs-lbl">طلاب</div></div>
+        <div><div class="fs-num">${fmt(totalPrice)}</div><div class="fs-lbl">إجمالي الاشتراك</div></div>
+        <div class="family-actions">
+          <button class="btn btn-sm btn-ghost" data-action="editFamily" data-id="${f.id}">تعديل</button>
+          <button class="btn btn-sm btn-danger" data-action="deleteFamily" data-id="${f.id}">حذف</button>
+        </div>
+      </div>
+    </div>
+    <div class="family-body">
+      ${students.length===0 ? `<div class="hint" style="margin-bottom:10px;">لا يوجد طلاب مسجلين لهذا الولي بعد.</div>` : `
+      <div class="table-wrap"><table>
+        <thead><tr><th>الطالب</th><th>المرحلة</th><th>خط السير</th><th>الاشتراك</th><th>السعر</th><th>حالة الدفع</th><th>الحضور/الغياب هذا الشهر</th><th></th></tr></thead>
+        <tbody>
+        ${students.map(s=>{
+          const absences = (s.absences||[]).filter(d=>d.startsWith(thisMonthKey()));
+          const present = Math.max(0, (Number(s.standardDays)||STATE.settings.standardDays) - absences.length);
+          const planClass = PLANS.find(pl=>pl.v===s.plan)?.c || 'monthly';
+          const sub = subscriptionInfo(s);
+          return `
+          <tr>
+            <td><b>${esc(s.name)}</b></td>
+            <td><span class="pill grade">${esc(s.grade)}</span></td>
+            <td>${esc(routeName(s.routeId))}</td>
+            <td><span class="pill ${planClass}">${esc(s.plan)}</span></td>
+            <td class="mono">${fmt(s.price)} ج.م</td>
+            <td>
+              ${subStatusPill(sub)}
+              ${sub.payment ? `<div class="hint" style="margin-top:4px;">من ${sub.payment.from} إلى ${sub.payment.to}</div>` : ''}
+              <button class="btn btn-sm btn-ghost" data-action="toggleRenewForm" data-family="${f.id}" data-student="${s.id}" style="margin-top:6px;">💳 تسجيل دفعة</button>
+            </td>
+            <td>
+              <span style="color:var(--good); font-weight:700;">${present} حضور</span> /
+              <span style="color:var(--danger); font-weight:700;">${absences.length} غياب</span>
+              <button class="btn btn-sm btn-ghost" data-action="markAbsent" data-family="${f.id}" data-student="${s.id}" style="margin-inline-start:6px;">تسجيل غياب اليوم</button>
+              ${absences.length ? `<div class="absence-tags">${absences.slice(-6).map(d=>`<span class="absence-tag">${d}<button data-action="unmarkAbsent" data-family="${f.id}" data-student="${s.id}" data-date="${d}">×</button></span>`).join('')}</div>` : ''}
+            </td>
+            <td class="row-actions">
+              <button class="btn btn-sm btn-ghost" data-action="editStudent" data-family="${f.id}" data-student="${s.id}">تعديل</button>
+              <button class="btn btn-sm btn-danger" data-action="deleteStudent" data-family="${f.id}" data-student="${s.id}">حذف</button>
+            </td>
+          </tr>
+          ${renewingStudent && renewingStudent.id===s.id ? `<tr><td colspan="8" style="padding:0; border-bottom:1px solid var(--line-soft);">${renderRenewForm(f, s)}</td></tr>` : ''}`;
+        }).join('')}
+        </tbody>
+      </table></div>`}
+
+      <div style="margin-top:12px;">
+        ${!showStudentForm ? `<button class="btn btn-ghost btn-sm" data-action="toggleStudentForm" data-family="${f.id}">+ إضافة طالب لهذا الولي</button>` : ''}
+      </div>
+
+      ${showStudentForm ? renderStudentForm(f, editingStudent) : ''}
+    </div>
+  </div>`;
+}
+
+function renderRenewForm(family, s){
+  const sub = subscriptionInfo(s);
+  const suggestedFrom = sub.payment ? (()=>{ const d=new Date(sub.payment.to); d.setDate(d.getDate()+1); return d.toISOString().slice(0,10); })() : todayISO();
+  const suggestedTo = addMonthsISO(suggestedFrom, 1);
+  const history = [...(s.payments||[])].sort((a,b)=>(b.to||'').localeCompare(a.to||''));
+  return `
+  <div class="salary-box" style="display:block; background:#EFF7F1; border-color:#bcd9c4; margin:10px 0;">
+    <form id="renewFormEl" data-form-type="renew" data-family="${family.id}" data-student="${s.id}" novalidate onsubmit="return false;">
+      <div class="hint" style="margin-bottom:8px; font-weight:700; color:var(--good);">تسجيل دفعة اشتراك جديدة لـ ${esc(s.name)}</div>
+      <div class="form-grid">
+        <div class="field"><label>المبلغ المدفوع (ج.م) <span class="req">*</span></label><input name="amount" type="number" min="0" step="1" value="${s.price??''}"></div>
+        <div class="field"><label>من تاريخ <span class="req">*</span></label><input name="from" type="date" value="${suggestedFrom}"></div>
+        <div class="field"><label>إلى تاريخ <span class="req">*</span></label><input name="to" type="date" value="${suggestedTo}"></div>
+      </div>
+      <div class="error-text" id="renewFormError"></div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-ghost" data-action="cancelRenewForm">إلغاء</button>
+        <button type="button" class="btn btn-primary" data-action="saveRenewal">حفظ الدفعة</button>
+      </div>
+    </form>
+    ${history.length ? `
+    <div style="margin-top:14px; padding-top:12px; border-top:1px dashed #bcd9c4;">
+      <div class="hint" style="margin-bottom:8px; font-weight:700;">سجل الدفعات السابقة (${history.length})</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>المبلغ</th><th>من</th><th>إلى</th><th></th></tr></thead>
+        <tbody>
+        ${history.map(p=>`<tr>
+          <td class="mono">${fmt(p.amount)} ج.م</td>
+          <td class="mono">${esc(p.from)}</td>
+          <td class="mono">${esc(p.to)}</td>
+          <td><button class="btn btn-sm btn-danger" data-action="deletePayment" data-family="${family.id}" data-student="${s.id}" data-payment="${p.id}">حذف</button></td>
+        </tr>`).join('')}
+        </tbody>
+      </table></div>
+    </div>` : ''}
+  </div>`;
+}
+
+function renderStudentForm(family, s){
+  const gradeOptions = GRADES.map(g=>`<option value="${g}" ${s?.grade===g?'selected':''}>${g}</option>`).join('');
+  const routeOptions = STATE.routes.map(r=>`<option value="${r.id}" ${s?.routeId===r.id?'selected':''}>${esc(r.name)}</option>`).join('');
+  const todayD = todayISO();
+  return `
+  <div class="salary-box" style="display:block; background:#fbf8ef;">
+    <form id="studentFormEl" data-form-type="student" data-family="${family.id}" data-student="${s?s.id:''}" novalidate onsubmit="return false;">
+      <div class="form-grid">
+        <div class="field"><label>اسم الطالب <span class="req">*</span></label><input name="name" value="${esc(s?.name||'')}"></div>
+        <div class="field"><label>المرحلة الدراسية <span class="req">*</span></label>
+          <select name="grade">
+            <option value="">اختر المرحلة</option>
+            ${gradeOptions}
+          </select>
+        </div>
+        <div class="field"><label>خط السير</label>
+          <select name="routeId"><option value="">بدون تحديد</option>${routeOptions}</select>
+        </div>
+        <div class="field"><label>نوع الاشتراك</label>
+          <select name="plan">${PLANS.map(pl=>`<option value="${pl.v}" ${s?.plan===pl.v?'selected':''}>${pl.v}</option>`).join('')}</select>
+        </div>
+        <div class="field"><label>سعر الاشتراك (ج.م)</label><input name="price" type="number" min="0" step="1" value="${s?.price??''}" id="studentPriceInput"></div>
+        <div class="field"><label>أيام العمل القياسية شهريًا</label><input name="standardDays" type="number" min="1" value="${s?.standardDays ?? STATE.settings.standardDays}"></div>
+        ${!s ? `
+        <div class="field"><label>الدفعة: من تاريخ</label><input name="subFrom" type="date" value="${todayD}"></div>
+        <div class="field"><label>الدفعة: إلى تاريخ</label><input name="subTo" type="date" value="${addMonthsISO(todayD,1)}"></div>
+        ` : ''}
+      </div>
+      <div class="hint">سعر الاشتراك يُقترح تلقائيًا حسب المرحلة (من الإعدادات) ويمكن تعديله يدويًا.${!s ? ' حدد فترة الدفعة الأولى (من - إلى) عشان يتسجل الاشتراك تلقائيًا.' : ' لتسجيل دفعة جديدة أو تجديد الاشتراك استخدم زرار "تسجيل دفعة" في جدول الطلاب.'}</div>
+      <div class="error-text" id="studentFormError"></div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-ghost" data-action="cancelStudentForm">إلغاء</button>
+        <button type="button" class="btn btn-primary" data-action="saveStudent">${s?'حفظ تعديلات الطالب':'إضافة الطالب'}</button>
+      </div>
+    </form>
+  </div>`;
+}
+
+
+/* =========================================================
+   DRIVERS
+========================================================= */
+function renderDrivers(){
+  const e = driverForm.id ? STATE.drivers.find(d=>d.id===driverForm.id) : null;
+  return `
+    <div class="topbar">
+      <div><h1>السواقين</h1><p>بيانات السواقين وحساب المرتب تلقائيًا حسب خط السير وعدد الأيام</p></div>
+      <button class="btn btn-amber" data-action="toggleDriverForm">${driverForm.open ? 'إغلاق النموذج' : '+ إضافة سواق'}</button>
+    </div>
+    <div class="road"></div>
+
+    ${driverForm.open ? `
+    <div class="card">
+      <div class="card-head"><h2>${e?'تعديل بيانات سواق':'سواق جديد'}</h2></div>
+      <div class="card-body">
+        <form id="driverFormEl" data-form-type="driver" data-id="${e?e.id:''}" novalidate onsubmit="return false;">
+          <div class="form-grid">
+            <div class="field"><label>الاسم <span class="req">*</span></label><input name="name" value="${esc(e?.name||'')}"></div>
+            <div class="field"><label>رقم التلفون</label><input name="phone" value="${esc(e?.phone||'')}" inputmode="tel"></div>
+            <div class="field"><label>خط السير <span class="req">*</span></label>
+              <select name="routeId">
+                <option value="">اختر خط السير</option>
+                ${STATE.routes.map(r=>`<option value="${r.id}" ${e?.routeId===r.id?'selected':''}>${esc(r.name)}</option>`).join('')}
+              </select>
+            </div>
+            <div class="field"><label>نوع الخط</label>
+              <select name="type">${TYPES.map(t=>`<option value="${t.v}" ${e?.type===t.v?'selected':''}>${t.v}</option>`).join('')}</select>
+            </div>
+            <div class="field"><label>عدد أيام العمل شهريًا</label><input name="workDays" type="number" min="0" value="${e?.workDays ?? STATE.settings.standardDays}" id="driverWorkDays"></div>
+            <div class="field check"><label><input type="checkbox" name="manual" id="driverManual" ${e?.manual?'checked':''}> تعديل المرتب يدويًا</label></div>
+          </div>
+          <div class="salary-box">
+            <div class="calc">المرتب المحسوب = سعر الخط للنوع المختار × (أيام العمل ÷ الأيام القياسية: ${STATE.settings.standardDays})</div>
+            <div><input type="number" name="finalSalary" id="driverFinalSalary" class="mono" style="width:140px; padding:8px 10px; border:1px solid var(--line); border-radius:8px;" value="${e?.finalSalary ?? ''}"></div>
+          </div>
+          <div class="error-text" id="driverFormError"></div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" data-action="cancelDriverForm">إلغاء</button>
+            <button type="button" class="btn btn-primary" data-action="saveDriver">${e?'حفظ التعديلات':'إضافة السواق'}</button>
+          </div>
+        </form>
+      </div>
+    </div>` : ''}
+
+    <div class="card">
+      <div class="card-head"><h2>قائمة السواقين (${STATE.drivers.length})</h2></div>
+      <div class="card-body" style="padding:0;">
+        ${STATE.drivers.length===0 ? emptyState('لا يوجد سواقين بعد','اضغط "إضافة سواق" للبدء') : `
+        <div class="table-wrap"><table>
+          <thead><tr><th>الاسم</th><th>الهاتف</th><th>خط السير</th><th>النوع</th><th>أيام العمل</th><th>المرتب</th><th></th></tr></thead>
+          <tbody>
+          ${STATE.drivers.map(d=>{
+            const tc = TYPES.find(t=>t.v===d.type)?.c || 'junior';
+            return `
+            <tr>
+              <td><b>${esc(d.name)}</b></td>
+              <td class="mono">${esc(d.phone)}</td>
+              <td>${esc(routeName(d.routeId))}</td>
+              <td><span class="pill ${tc}">${esc(d.type)}</span></td>
+              <td class="mono">${fmt(d.workDays)}</td>
+              <td class="mono">${fmt(d.finalSalary)} ج.م ${d.manual?'<span class="hint">(يدوي)</span>':''}</td>
+              <td class="row-actions">
+                <button class="btn btn-sm btn-ghost" data-action="editDriver" data-id="${d.id}">تعديل</button>
+                <button class="btn btn-sm btn-danger" data-action="deleteDriver" data-id="${d.id}">حذف</button>
+              </td>
+            </tr>`;
+          }).join('')}
+          </tbody>
+        </table></div>`}
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   SUPERVISORS
+========================================================= */
+function renderSupervisors(){
+  const e = supForm.id ? STATE.supervisors.find(s=>s.id===supForm.id) : null;
+  return `
+    <div class="topbar">
+      <div><h1>المشرفين</h1><p>بيانات المشرفات وحساب المرتب حسب خط السير وعدد الأيام</p></div>
+      <button class="btn btn-amber" data-action="toggleSupForm">${supForm.open ? 'إغلاق النموذج' : '+ إضافة مشرفة'}</button>
+    </div>
+    <div class="road"></div>
+
+    ${supForm.open ? `
+    <div class="card">
+      <div class="card-head"><h2>${e?'تعديل بيانات مشرفة':'مشرفة جديدة'}</h2></div>
+      <div class="card-body">
+        <form id="supFormEl" data-form-type="supervisor" data-id="${e?e.id:''}" novalidate onsubmit="return false;">
+          <div class="form-grid">
+            <div class="field"><label>اسم المشرفة <span class="req">*</span></label><input name="name" value="${esc(e?.name||'')}"></div>
+            <div class="field"><label>رقمها</label><input name="phone" value="${esc(e?.phone||'')}" inputmode="tel"></div>
+            <div class="field span2"><label>محل إقامتها</label><input name="address" value="${esc(e?.address||'')}"></div>
+            <div class="field"><label>خط السير <span class="req">*</span></label>
+              <select name="routeId">
+                <option value="">اختر خط السير</option>
+                ${STATE.routes.map(r=>`<option value="${r.id}" ${e?.routeId===r.id?'selected':''}>${esc(r.name)}</option>`).join('')}
+              </select>
+            </div>
+            <div class="field"><label>نوع الخط</label>
+              <select name="type">${TYPES.map(t=>`<option value="${t.v}" ${e?.type===t.v?'selected':''}>${t.v}</option>`).join('')}</select>
+            </div>
+            <div class="field"><label>عدد أيام العمل شهريًا</label><input name="workDays" type="number" min="0" value="${e?.workDays ?? STATE.settings.standardDays}" id="supWorkDays"></div>
+            <div class="field check"><label><input type="checkbox" name="manual" id="supManual" ${e?.manual?'checked':''}> تعديل المرتب يدويًا</label></div>
+          </div>
+          <div class="salary-box">
+            <div class="calc">المرتب المحسوب = سعر الخط للنوع المختار × (أيام العمل ÷ الأيام القياسية: ${STATE.settings.standardDays})</div>
+            <div><input type="number" name="finalSalary" id="supFinalSalary" class="mono" style="width:140px; padding:8px 10px; border:1px solid var(--line); border-radius:8px;" value="${e?.finalSalary ?? ''}"></div>
+          </div>
+          <div class="error-text" id="supFormError"></div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" data-action="cancelSupForm">إلغاء</button>
+            <button type="button" class="btn btn-primary" data-action="saveSupervisor">${e?'حفظ التعديلات':'إضافة المشرفة'}</button>
+          </div>
+        </form>
+      </div>
+    </div>` : ''}
+
+    <div class="card">
+      <div class="card-head"><h2>قائمة المشرفين (${STATE.supervisors.length})</h2></div>
+      <div class="card-body" style="padding:0;">
+        ${STATE.supervisors.length===0 ? emptyState('لا يوجد مشرفين بعد','اضغط "إضافة مشرفة" للبدء') : `
+        <div class="table-wrap"><table>
+          <thead><tr><th>الاسم</th><th>الهاتف</th><th>محل الإقامة</th><th>خط السير</th><th>النوع</th><th>أيام العمل</th><th>المرتب</th><th></th></tr></thead>
+          <tbody>
+          ${STATE.supervisors.map(s=>{
+            const tc = TYPES.find(t=>t.v===s.type)?.c || 'junior';
+            return `
+            <tr>
+              <td><b>${esc(s.name)}</b></td>
+              <td class="mono">${esc(s.phone)}</td>
+              <td>${esc(s.address)}</td>
+              <td>${esc(routeName(s.routeId))}</td>
+              <td><span class="pill ${tc}">${esc(s.type)}</span></td>
+              <td class="mono">${fmt(s.workDays)}</td>
+              <td class="mono">${fmt(s.finalSalary)} ج.م ${s.manual?'<span class="hint">(يدوي)</span>':''}</td>
+              <td class="row-actions">
+                <button class="btn btn-sm btn-ghost" data-action="editSup" data-id="${s.id}">تعديل</button>
+                <button class="btn btn-sm btn-danger" data-action="deleteSup" data-id="${s.id}">حذف</button>
+              </td>
+            </tr>`;
+          }).join('')}
+          </tbody>
+        </table></div>`}
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   STAFF (فريق العمل وحسابات الدخول بالرقم السري)
+========================================================= */
+function renderStaff(){
+  const e = staffForm.id ? STATE.staff.find(s=>s.id===staffForm.id) : null;
+  const roleLabelMap = { admin:'مدير', supervisor:'مشرف', driver:'سواق' };
+  return `
+    <div class="topbar">
+      <div><h1>فريق العمل والدخول</h1><p>كل عضو فريق ليه رقم سري خاص بيه يدخل بيه على النظام حسب دوره</p></div>
+      <button class="btn btn-amber" data-action="toggleStaffForm">${staffForm.open ? 'إغلاق النموذج' : '+ إضافة عضو فريق'}</button>
+    </div>
+    <div class="road"></div>
+
+    ${staffForm.open ? `
+    <div class="card">
+      <div class="card-head"><h2>${e?'تعديل بيانات العضو':'عضو فريق جديد'}</h2></div>
+      <div class="card-body">
+        <form id="staffFormEl" data-form-type="staff" data-id="${e?e.id:''}" novalidate onsubmit="return false;">
+          <div class="form-grid">
+            <div class="field"><label>الاسم <span class="req">*</span></label><input name="name" value="${esc(e?.name||'')}"></div>
+            <div class="field"><label>الدور <span class="req">*</span></label>
+              <select name="role">
+                <option value="admin" ${e?.role==='admin'?'selected':''}>مدير (كل الصلاحيات)</option>
+                <option value="supervisor" ${e?.role==='supervisor'?'selected':''}>مشرف</option>
+                <option value="driver" ${e?.role==='driver'?'selected':''}>سواق</option>
+              </select>
+            </div>
+            <div class="field"><label>خط السير</label>
+              <select name="routeId">
+                <option value="">بدون تحديد</option>
+                ${STATE.routes.map(r=>`<option value="${r.id}" ${e?.routeId===r.id?'selected':''}>${esc(r.name)}</option>`).join('')}
+              </select>
+            </div>
+            <div class="field"><label>الرقم السري (4-6 أرقام) <span class="req">*</span></label><input name="pin" value="${esc(e?.pin||'')}" inputmode="numeric" maxlength="6"></div>
+          </div>
+          <div class="hint">"خط السير" مطلوب بس لو الدور مشرف أو سواق — بيحدد ليهم أي طلاب يشوفوا في الحضور.</div>
+          <div class="error-text" id="staffFormError"></div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" data-action="cancelStaffForm">إلغاء</button>
+            <button type="button" class="btn btn-primary" data-action="saveStaff">${e?'حفظ التعديلات':'إضافة العضو'}</button>
+          </div>
+        </form>
+      </div>
+    </div>` : ''}
+
+    <div class="card">
+      <div class="card-head"><h2>أعضاء الفريق (${STATE.staff.length})</h2></div>
+      <div class="card-body" style="padding:0;">
+        ${STATE.staff.length===0 ? emptyState('لا يوجد أعضاء بعد','') : `
+        <div class="table-wrap"><table>
+          <thead><tr><th>الاسم</th><th>الدور</th><th>خط السير</th><th>الرقم السري</th><th></th></tr></thead>
+          <tbody>
+          ${STATE.staff.map(s=>`
+            <tr>
+              <td><b>${esc(s.name)}</b></td>
+              <td><span class="pill role-${s.role}">${roleLabelMap[s.role]||s.role}</span></td>
+              <td>${s.routeId?esc(routeName(s.routeId)):'—'}</td>
+              <td class="mono">${esc(s.pin)}</td>
+              <td class="row-actions">
+                <button class="btn btn-sm btn-ghost" data-action="editStaff" data-id="${s.id}">تعديل</button>
+                <button class="btn btn-sm btn-danger" data-action="deleteStaff" data-id="${s.id}">حذف</button>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table></div>`}
+      </div>
+    </div>
+  `;
+}
+
+async function saveStaff(form){
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+  const errEl = document.getElementById('staffFormError');
+  if(!data.name || !data.name.trim()){ errEl.textContent='من فضلك اكتب الاسم.'; errEl.classList.add('show'); return; }
+  if(!data.pin || !/^\d{4,6}$/.test(data.pin.trim())){ errEl.textContent='الرقم السري لازم يكون من 4 إلى 6 أرقام.'; errEl.classList.add('show'); return; }
+  if(data.role!=='admin' && !data.routeId){ errEl.textContent='من فضلك اختر خط السير لهذا الدور.'; errEl.classList.add('show'); return; }
+  const id = form.dataset.id;
+  const dup = STATE.staff.find(s=>s.pin===data.pin.trim() && s.id!==id);
+  if(dup){ errEl.textContent='الرقم السري ده مستخدم بالفعل لعضو تاني.'; errEl.classList.add('show'); return; }
+  errEl.classList.remove('show');
+  if(id){
+    const idx = STATE.staff.findIndex(s=>s.id===id);
+    STATE.staff[idx] = {...STATE.staff[idx], ...data};
+  } else {
+    STATE.staff.push({id:uid(), ...data});
+  }
+  const ok = await saveKey('staff');
+  if(ok){ staffForm.open=false; staffForm.id=null; toast('تم حفظ بيانات العضو'); render(); }
+}
+
+/* =========================================================
+   SETTINGS / ROUTES / GRADE PRICES
+========================================================= */
+function renderSettings(){
+  const e = routeForm.id ? STATE.routes.find(r=>r.id===routeForm.id) : null;
+  return `
+    <div class="topbar">
+      <div><h1>خطوط السير والإعدادات</h1><p>خطوط السير تُستخدم لحساب مرتبات السواقين والمشرفين، وأسعار المراحل تُستخدم كاقتراح لسعر اشتراك الطالب</p></div>
+    </div>
+    <div class="road"></div>
+
+    <div class="card">
+      <div class="card-head"><h2>عدد أيام العمل القياسية</h2></div>
+      <div class="card-body">
+        <div class="form-grid" style="max-width:520px;">
+          <div class="field"><label>عدد أيام العمل القياسية بالشهر</label><input id="standardDaysInput" type="number" min="1" value="${STATE.settings.standardDays}"></div>
+          <div class="field"><label>تنبيه قبل انتهاء اشتراك الطالب بعدد أيام</label><input id="alertDaysInput" type="number" min="1" value="${STATE.settings.alertDays}"></div>
+        </div>
+        <div class="hint" style="margin-top:8px;">الأيام القياسية تُستخدم لحساب المرتبات النسبية. أيام التنبيه تحدد قبل كام يوم من انتهاء اشتراك الطالب يظهر تنبيه في الرئيسية.</div>
+        <div class="form-actions"><button class="btn btn-primary" data-action="saveGeneralSettings">حفظ</button></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>أسعار الاشتراك حسب المرحلة الدراسية</h2></div>
+      <div class="card-body">
+        <div class="grade-price-grid">
+          ${GRADES.map(g=>`
+            <div class="grade-price-item">
+              <label>${g}</label>
+              <input type="number" min="0" data-grade="${esc(g)}" class="gradePriceInput" value="${STATE.settings.gradePrices[g] ?? ''}">
+            </div>`).join('')}
+        </div>
+        <div class="form-actions"><button class="btn btn-primary" data-action="saveGradePrices">حفظ أسعار المراحل</button></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>خطوط السير (${STATE.routes.length})</h2>
+        <button class="btn btn-amber btn-sm" data-action="toggleRouteForm">${routeForm.open ? 'إغلاق النموذج' : '+ إضافة خط سير'}</button>
+      </div>
+      <div class="card-body">
+        ${routeForm.open ? `
+        <form id="routeFormEl" data-form-type="route" data-id="${e?e.id:''}" novalidate onsubmit="return false;" style="margin-bottom:18px;">
+          <div class="form-grid">
+            <div class="field span2"><label>اسم خط السير <span class="req">*</span></label><input name="name" value="${esc(e?.name||'')}" placeholder="مثال: بيطاش"></div>
+            <div class="field"><label>سعر الخط (جونيور)</label><input name="priceJunior" type="number" min="0" value="${e?.priceJunior??''}"></div>
+            <div class="field"><label>سعر الخط (كيجي)</label><input name="priceKG" type="number" min="0" value="${e?.priceKG??''}"></div>
+            <div class="field"><label>سعر الخط (تغطيات)</label><input name="priceCoverage" type="number" min="0" value="${e?.priceCoverage??''}"></div>
+          </div>
+          <div class="error-text" id="routeFormError"></div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" data-action="cancelRouteForm">إلغاء</button>
+            <button type="button" class="btn btn-primary" data-action="saveRoute">${e?'حفظ التعديلات':'إضافة الخط'}</button>
+          </div>
+        </form>` : ''}
+
+        ${STATE.routes.length===0 ? emptyState('لا توجد خطوط سير بعد','أضف خط السير الأول') : `
+        <div class="table-wrap"><table>
+          <thead><tr><th>اسم الخط</th><th>سعر جونيور</th><th>سعر كيجي</th><th>سعر تغطيات</th><th></th></tr></thead>
+          <tbody>
+          ${STATE.routes.map(r=>`
+            <tr>
+              <td><b>${esc(r.name)}</b></td>
+              <td class="mono">${fmt(r.priceJunior)} ج.م</td>
+              <td class="mono">${fmt(r.priceKG)} ج.م</td>
+              <td class="mono">${fmt(r.priceCoverage)} ج.م</td>
+              <td class="row-actions">
+                <button class="btn btn-sm btn-ghost" data-action="editRoute" data-id="${r.id}">تعديل</button>
+                <button class="btn btn-sm btn-danger" data-action="deleteRoute" data-id="${r.id}">حذف</button>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table></div>`}
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   REPORTS (خط سير / طالب / مستحقات الشهر / حضور بتاريخ معيّن)
+========================================================= */
+async function loadDateReport(date){
+  reportsState.date = date;
+  reportsState.dateRecords = {};
+  try{
+    const snap = await db.collection('attendance').where('date','==',date).get();
+    snap.forEach(doc=>{ reportsState.dateRecords[doc.data().studentId] = doc.data(); });
+  }catch(e){
+    console.error(e);
+    toast('تعذر تحميل بيانات الحضور لهذا اليوم، تأكد من الإنترنت', true);
+  }
+}
+
+function reportNavHtml(){
+  const items = [
+    {v:'route', l:'تقرير خط السير'},
+    {v:'student', l:'تقرير الطالب'},
+    {v:'dues', l:'مستحقات الشهر'},
+    {v:'date', l:'الحضور بتاريخ معيّن'}
+  ];
+  return `<div class="report-nav">${items.map(it=>`<button class="btn btn-sm ${reportsState.view===it.v?'btn-primary':'btn-ghost'}" data-action="reportView" data-view="${it.v}">${it.l}</button>`).join('')}</div>`;
+}
+
+function renderReports(){
+  if(reportsState.view==='student') return renderReportStudent();
+  if(reportsState.view==='dues') return renderReportDues();
+  if(reportsState.view==='date') return renderReportDate();
+  return renderReportRoute();
+}
+
+function renderReportRoute(){
+  const monthKey = reportsState.month || thisMonthKey();
+  const routeOptions = STATE.routes.map(r=>`<option value="${r.id}" ${reportsState.routeId===r.id?'selected':''}>${esc(r.name)}</option>`).join('');
+  const route = routeById(reportsState.routeId);
+
+  let body = `<div class="card"><div class="card-body">${emptyState('اختر خط سير', 'اختر خط السير من القائمة أعلاه لعرض تقريره التفصيلي')}</div></div>`;
+  if(route){
+    const students = allStudentsFlat().filter(s=>s.routeId===route.id);
+    const drivers = STATE.drivers.filter(d=>d.routeId===route.id);
+    const supervisors = STATE.supervisors.filter(s=>s.routeId===route.id);
+    const totalRevenue = students.reduce((s,st)=>s+(Number(st.price)||0),0);
+    let totalAbsences = 0;
+    let alertCount = 0;
+    const rows = students.map(s=>{
+      const absences = (s.absences||[]).filter(d=>d.startsWith(monthKey));
+      totalAbsences += absences.length;
+      const std = Number(s.standardDays)||STATE.settings.standardDays;
+      const present = Math.max(0, std-absences.length);
+      const planClass = PLANS.find(pl=>pl.v===s.plan)?.c || 'monthly';
+      const sub = subscriptionInfo(s);
+      if(sub.status==='expired' || sub.status==='expiring') alertCount++;
+      return `<tr>
+        <td><b>${esc(s.name)}</b></td>
+        <td>${esc(s.family.parentName)}</td>
+        <td class="mono">${esc(s.family.fatherPhone||s.family.motherPhone||'—')}</td>
+        <td><span class="pill grade">${esc(s.grade)}</span></td>
+        <td><span class="pill ${planClass}">${esc(s.plan)}</span></td>
+        <td class="mono">${fmt(s.price)} ج.م</td>
+        <td><span style="color:var(--good); font-weight:800;">${present}</span> / <span style="color:var(--danger); font-weight:800;">${absences.length}</span></td>
+        <td>${subStatusPill(sub)}</td>
+      </tr>`;
+    }).join('');
+
+    body = `
+    <div class="stats" style="margin-bottom:16px;">
+      <div class="stat"><div class="num">${fmt(students.length)}</div><div class="lbl">عدد الطلاب</div></div>
+      <div class="stat amber"><div class="num">${fmt(totalRevenue)}</div><div class="lbl">إجمالي الاشتراكات (ج.م)</div></div>
+      <div class="stat"><div class="num">${fmt(totalAbsences)}</div><div class="lbl">إجمالي أيام الغياب (${monthKey})</div></div>
+      <div class="stat amber"><div class="num">${fmt(alertCount)}</div><div class="lbl">اشتراكات محتاجة تجديد</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>السواقين والمشرفين على الخط</h2></div>
+      <div class="card-body">
+        ${drivers.length===0 && supervisors.length===0 ? '<div class="hint">لا يوجد سواق أو مشرف مُعيّن على هذا الخط بعد.</div>' : `
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          ${drivers.map(d=>`<span class="pill role-driver">🚌 ${esc(d.name)} — سواق ${d.phone?'· '+esc(d.phone):''}</span>`).join('')}
+          ${supervisors.map(s=>`<span class="pill role-supervisor">🧑‍🏫 ${esc(s.name)} — مشرف ${s.phone?'· '+esc(s.phone):''}</span>`).join('')}
+        </div>`}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>طلاب الخط (${students.length})</h2></div>
+      <div class="card-body" style="padding:0;">
+        ${students.length===0 ? emptyState('لا يوجد طلاب على هذا الخط', '') : `
+        <div class="table-wrap"><table>
+          <thead><tr><th>الطالب</th><th>ولي الأمر</th><th>تلفون</th><th>المرحلة</th><th>الاشتراك</th><th>السعر</th><th>حضور/غياب</th><th>حالة الاشتراك</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>`}
+      </div>
+    </div>`;
+  }
+
+  return `
+    <div class="topbar">
+      <div><h1>تقرير خط السير</h1><p>عرض تفصيلي لطلاب وموظفي خط سير معيّن خلال شهر محدد</p></div>
+      <button class="btn btn-ghost" data-action="printReport">🖨️ طباعة</button>
+    </div>
+    <div class="road"></div>
+    ${reportNavHtml()}
+    <div class="card"><div class="card-body" style="padding:14px 18px;">
+      <div class="search-bar">
+        <select id="reportRouteSelect"><option value="">اختر خط السير</option>${routeOptions}</select>
+        <input type="month" id="reportMonthInput" value="${monthKey}">
+      </div>
+    </div></div>
+    ${body}
+  `;
+}
+
+function renderReportStudent(){
+  const monthKey = reportsState.month || thisMonthKey();
+  const families = STATE.parents;
+  const optgroups = families.map(f=>{
+    const opts = (f.students||[]).map(s=>`<option value="${s.id}" ${reportsState.studentId===s.id?'selected':''}>${esc(s.name)}</option>`).join('');
+    return opts ? `<optgroup label="${esc(f.parentName)||'بدون اسم'}">${opts}</optgroup>` : '';
+  }).join('');
+
+  const flat = allStudentsFlat();
+  const st = flat.find(s=>s.id===reportsState.studentId);
+
+  let body = `<div class="card"><div class="card-body">${emptyState('اختر طالب', 'اختر الطالب من القائمة أعلاه لعرض تقريره التفصيلي')}</div></div>`;
+  if(st){
+    const absencesAll = st.absences||[];
+    const absencesMonth = absencesAll.filter(d=>d.startsWith(monthKey));
+    const std = Number(st.standardDays)||STATE.settings.standardDays;
+    const present = Math.max(0, std-absencesMonth.length);
+    const planClass = PLANS.find(pl=>pl.v===st.plan)?.c || 'monthly';
+    const sub = subscriptionInfo(st);
+    const payments = [...(st.payments||[])].sort((a,b)=>(b.to||'').localeCompare(a.to||''));
+    const totalPaid = payments.reduce((s,p)=>s+(Number(p.amount)||0),0);
+    body = `
+    <div class="card">
+      <div class="card-head"><h2>بيانات الطالب</h2><span>${subStatusPill(sub)}</span></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="field"><label>الاسم</label><div style="font-size:14.5px; font-weight:800; color:var(--navy);">${esc(st.name)}</div></div>
+          <div class="field"><label>المرحلة</label><span class="pill grade">${esc(st.grade)}</span></div>
+          <div class="field"><label>خط السير</label><div>${esc(routeName(st.routeId))}</div></div>
+          <div class="field"><label>نوع الاشتراك</label><span class="pill ${planClass}">${esc(st.plan)}</span></div>
+          <div class="field"><label>سعر الاشتراك</label><div class="mono">${fmt(st.price)} ج.م</div></div>
+          <div class="field"><label>أيام العمل القياسية</label><div class="mono">${fmt(std)}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>بيانات ولي الأمر</h2></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="field"><label>اسم ولي الأمر</label><div>${esc(st.family.parentName)||'—'}</div></div>
+          <div class="field"><label>تلفون الأب</label><div class="mono">${esc(st.family.fatherPhone||'—')}</div></div>
+          <div class="field"><label>تلفون الأم</label><div class="mono">${esc(st.family.motherPhone||'—')}</div></div>
+          <div class="field span2"><label>العنوان</label><div>${esc(st.family.address||'—')}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="stats" style="margin-bottom:16px;">
+      <div class="stat"><div class="num">${present}</div><div class="lbl">أيام الحضور (${monthKey})</div></div>
+      <div class="stat"><div class="num">${absencesMonth.length}</div><div class="lbl">أيام الغياب (${monthKey})</div></div>
+      <div class="stat amber"><div class="num">${fmt(totalPaid)}</div><div class="lbl">إجمالي المدفوع (ج.م)</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>سجل الدفعات (${payments.length})</h2></div>
+      <div class="card-body" style="padding:0;">
+        ${payments.length===0 ? emptyState('لا توجد دفعات مسجلة', 'استخدم زرار "تسجيل دفعة" في صفحة أولياء الأمور') : `
+        <div class="table-wrap"><table>
+          <thead><tr><th>المبلغ</th><th>من</th><th>إلى</th><th>تاريخ التسجيل</th></tr></thead>
+          <tbody>
+          ${payments.map(p=>`<tr>
+            <td class="mono">${fmt(p.amount)} ج.م</td>
+            <td class="mono">${esc(p.from)}</td>
+            <td class="mono">${esc(p.to)}</td>
+            <td class="mono">${p.createdAt?esc(p.createdAt.slice(0,10)):'—'}</td>
+          </tr>`).join('')}
+          </tbody>
+        </table></div>`}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>تواريخ الغياب هذا الشهر</h2></div>
+      <div class="card-body">
+        ${absencesMonth.length===0 ? '<div class="hint">لا يوجد غياب مسجل هذا الشهر.</div>' :
+        `<div class="absence-tags">${absencesMonth.map(d=>`<span class="absence-tag">${d}</span>`).join('')}</div>`}
+      </div>
+    </div>`;
+  }
+
+  return `
+    <div class="topbar">
+      <div><h1>تقرير الطالب</h1><p>بيانات شاملة عن طالب معيّن وسجل حضوره وغيابه</p></div>
+      <button class="btn btn-ghost" data-action="printReport">🖨️ طباعة</button>
+    </div>
+    <div class="road"></div>
+    ${reportNavHtml()}
+    <div class="card"><div class="card-body" style="padding:14px 18px;">
+      <div class="search-bar">
+        <select id="reportStudentSelect" style="min-width:220px;"><option value="">اختر الطالب</option>${optgroups}</select>
+        <input type="month" id="reportMonthInput" value="${monthKey}">
+      </div>
+    </div></div>
+    ${body}
+  `;
+}
+
+function renderReportDues(){
+  const monthKey = reportsState.duesMonth || thisMonthKey();
+  let students = allStudentsFlat();
+  if(reportsState.duesPlan) students = students.filter(s=>s.plan===reportsState.duesPlan);
+  const totalDue = students.reduce((s,st)=>s+(Number(st.price)||0),0);
+  const withSub = students.map(s=>({...s, sub:subscriptionInfo(s)}));
+  const expiredCount = withSub.filter(s=>s.sub.status==='expired').length;
+  const expiringCount = withSub.filter(s=>s.sub.status==='expiring').length;
+
+  const byRoute = {};
+  withSub.forEach(s=>{
+    const rid = s.routeId||'none';
+    if(!byRoute[rid]) byRoute[rid] = [];
+    byRoute[rid].push(s);
+  });
+
+  const routeSections = Object.keys(byRoute).map(rid=>{
+    const list = byRoute[rid];
+    const subTotal = list.reduce((s,st)=>s+(Number(st.price)||0),0);
+    const rname = rid==='none' ? 'بدون خط سير' : routeName(rid);
+    return `
+    <div class="card">
+      <div class="card-head"><h2>${esc(rname)} — ${list.length} طالب</h2><span class="mono" style="font-weight:800; color:var(--navy);">${fmt(subTotal)} ج.م</span></div>
+      <div class="card-body" style="padding:0;">
+        <div class="table-wrap"><table>
+          <thead><tr><th>الطالب</th><th>ولي الأمر</th><th>المرحلة</th><th>نوع الاشتراك</th><th>المستحق</th><th>حالة الاشتراك</th></tr></thead>
+          <tbody>
+          ${list.map(s=>{
+            const planClass = PLANS.find(pl=>pl.v===s.plan)?.c || 'monthly';
+            return `<tr>
+              <td><b>${esc(s.name)}</b></td>
+              <td>${esc(s.family.parentName)}</td>
+              <td><span class="pill grade">${esc(s.grade)}</span></td>
+              <td><span class="pill ${planClass}">${esc(s.plan)}</span></td>
+              <td class="mono">${fmt(s.price)} ج.م</td>
+              <td>${subStatusPill(s.sub)}</td>
+            </tr>`;
+          }).join('')}
+          </tbody>
+        </table></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="topbar">
+      <div><h1>مستحقات الشهر</h1><p>إجمالي الاشتراكات المستحقة من كل الطلاب لشهر ${esc(monthKey)} — مقسّمة حسب خط السير</p></div>
+      <button class="btn btn-ghost" data-action="printReport">🖨️ طباعة</button>
+    </div>
+    <div class="road"></div>
+    ${reportNavHtml()}
+    <div class="card"><div class="card-body" style="padding:14px 18px;">
+      <div class="search-bar">
+        <input type="month" id="reportDuesMonth" value="${monthKey}">
+        <select id="reportDuesPlan">
+          <option value="">كل أنواع الاشتراك</option>
+          ${PLANS.map(pl=>`<option value="${pl.v}" ${reportsState.duesPlan===pl.v?'selected':''}>${pl.v}</option>`).join('')}
+        </select>
+      </div>
+    </div></div>
+    <div class="stats" style="margin-bottom:16px;">
+      <div class="stat"><div class="num">${fmt(students.length)}</div><div class="lbl">عدد الطلاب</div></div>
+      <div class="stat amber"><div class="num">${fmt(totalDue)}</div><div class="lbl">إجمالي المستحقات (ج.م)</div></div>
+      <div class="stat"><div class="num">${fmt(expiredCount)}</div><div class="lbl">اشتراكات منتهية</div></div>
+      <div class="stat amber"><div class="num">${fmt(expiringCount)}</div><div class="lbl">قاربت على الانتهاء</div></div>
+    </div>
+    ${students.length===0 ? `<div class="card"><div class="card-body">${emptyState('لا يوجد طلاب', '')}</div></div>` : routeSections}
+  `;
+}
+
+function renderReportDate(){
+  const date = reportsState.date || todayISO();
+  const records = reportsState.dateRecords || {};
+  const students = allStudentsFlat();
+
+  const byRoute = {};
+  students.forEach(s=>{
+    const rid = s.routeId||'none';
+    if(!byRoute[rid]) byRoute[rid] = [];
+    byRoute[rid].push(s);
+  });
+
+  let totalPresent=0, totalAbsent=0, totalUnmarked=0;
+
+  const sections = Object.keys(byRoute).map(rid=>{
+    const list = byRoute[rid];
+    const rname = rid==='none' ? 'بدون خط سير' : routeName(rid);
+    const rows = list.map(s=>{
+      const rec = records[s.id];
+      const status = rec ? rec.status : null;
+      if(status==='present') totalPresent++;
+      else if(status==='absent') totalAbsent++;
+      else totalUnmarked++;
+      const label = status==='present' ? 'حاضر' : status==='absent' ? 'غايب' : 'لم يُسجل';
+      const color = status==='present' ? 'var(--good)' : status==='absent' ? 'var(--danger)' : 'var(--ink-faint)';
+      return `<tr>
+        <td><b>${esc(s.name)}</b></td>
+        <td>${esc(s.family.parentName)}</td>
+        <td class="mono">${esc(s.family.fatherPhone||s.family.motherPhone||'—')}</td>
+        <td><span style="font-weight:800; color:${color};">${label}</span></td>
+      </tr>`;
+    }).join('');
+    return `
+    <div class="card">
+      <div class="card-head"><h2>${esc(rname)} — ${list.length} طالب</h2></div>
+      <div class="card-body" style="padding:0;">
+        ${list.length===0 ? emptyState('لا يوجد طلاب على هذا الخط','') : `
+        <div class="table-wrap"><table>
+          <thead><tr><th>الطالب</th><th>ولي الأمر</th><th>تلفون</th><th>الحالة</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>`}
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="topbar">
+      <div><h1>الحضور بتاريخ معيّن</h1><p>عرض حالة كل طالب في كل خط سير ليوم محدد</p></div>
+      <button class="btn btn-ghost" data-action="printReport">🖨️ طباعة</button>
+    </div>
+    <div class="road"></div>
+    ${reportNavHtml()}
+    <div class="card"><div class="card-body" style="padding:14px 18px;">
+      <div class="search-bar">
+        <input type="date" id="reportDate" value="${date}">
+      </div>
+    </div></div>
+    <div class="stats" style="margin-bottom:16px;">
+      <div class="stat"><div class="num">${fmt(totalPresent)}</div><div class="lbl">حاضر</div></div>
+      <div class="stat"><div class="num">${fmt(totalAbsent)}</div><div class="lbl">غايب</div></div>
+      <div class="stat amber"><div class="num">${fmt(totalUnmarked)}</div><div class="lbl">لم يُسجل</div></div>
+    </div>
+    ${students.length===0 ? `<div class="card"><div class="card-body">${emptyState('لا يوجد طلاب','')}</div></div>` : sections}
+  `;
+}
+
+/* =========================================================
+   SALARY LIVE PREVIEW (driver / supervisor forms)
+========================================================= */
+function syncSalaryPreview(){
+  const driverForm_ = document.getElementById('driverFormEl');
+  if(driverForm_){
+    const update = ()=>{
+      if(document.getElementById('driverManual').checked) return;
+      document.getElementById('driverFinalSalary').value = calcSalary(driverForm_.routeId.value, driverForm_.type.value, driverForm_.workDays.value);
+    };
+    if(!driverForm.id) update();
+  }
+  const supForm_ = document.getElementById('supFormEl');
+  if(supForm_){
+    const update = ()=>{
+      if(document.getElementById('supManual').checked) return;
+      document.getElementById('supFinalSalary').value = calcSalary(supForm_.routeId.value, supForm_.type.value, supForm_.workDays.value);
+    };
+    if(!supForm.id) update();
+  }
+}
+
+/* =========================================================
+   GLOBAL EVENT DELEGATION (click / change / input / submit)
+========================================================= */
+const main = document.getElementById('main');
+
+main.addEventListener('click', async (ev)=>{
+  const btn = ev.target.closest('[data-action]');
+  if(!btn) return;
+  const action = btn.dataset.action;
+
+  switch(action){
+    case 'toggleFamilyForm':
+      familyForm.open = !familyForm.open; familyForm.id = null; render(); break;
+    case 'cancelFamilyForm':
+      familyForm.open = false; familyForm.id = null; render(); break;
+    case 'editFamily':
+      familyForm.open = true; familyForm.id = btn.dataset.id; render(); break;
+    case 'deleteFamily': {
+      if(!confirm('حذف ولي الأمر سيحذف كل الطلاب المسجلين تحته أيضًا. متابعة؟')) return;
+      STATE.parents = STATE.parents.filter(f=>f.id!==btn.dataset.id);
+      await saveKey('parents'); toast('تم حذف ولي الأمر وكل بياناته'); render(); break;
+    }
+    case 'toggleStudentForm':
+      studentForm = { open:true, familyId:btn.dataset.family, studentId:null }; render(); break;
+    case 'cancelStudentForm':
+      studentForm = { open:false, familyId:null, studentId:null }; render(); break;
+    case 'editStudent':
+      studentForm = { open:true, familyId:btn.dataset.family, studentId:btn.dataset.student }; render(); break;
+    case 'deleteStudent': {
+      if(!confirm('حذف بيانات هذا الطالب؟')) return;
+      const fam = STATE.parents.find(f=>f.id===btn.dataset.family);
+      if(fam) fam.students = fam.students.filter(s=>s.id!==btn.dataset.student);
+      await saveKey('parents'); toast('تم حذف الطالب'); render(); break;
+    }
+    case 'markAbsent': {
+      const fam = STATE.parents.find(f=>f.id===btn.dataset.family);
+      const st = fam?.students.find(s=>s.id===btn.dataset.student);
+      if(st){ st.absences = st.absences||[]; const t = todayISO(); if(!st.absences.includes(t)) st.absences.push(t); await saveKey('parents'); toast('تم تسجيل الغياب لليوم'); render(); }
+      break;
+    }
+    case 'unmarkAbsent': {
+      const fam = STATE.parents.find(f=>f.id===btn.dataset.family);
+      const st = fam?.students.find(s=>s.id===btn.dataset.student);
+      if(st){ st.absences = (st.absences||[]).filter(d=>d!==btn.dataset.date); await saveKey('parents'); render(); }
+      break;
+    }
+
+    case 'toggleDriverForm': driverForm.open = !driverForm.open; driverForm.id=null; render(); break;
+    case 'cancelDriverForm': driverForm.open=false; driverForm.id=null; render(); break;
+    case 'editDriver': driverForm.open=true; driverForm.id=btn.dataset.id; render(); break;
+    case 'deleteDriver': {
+      if(!confirm('حذف بيانات هذا السواق؟')) return;
+      STATE.drivers = STATE.drivers.filter(d=>d.id!==btn.dataset.id);
+      await saveKey('drivers'); toast('تم الحذف'); render(); break;
+    }
+
+    case 'toggleSupForm': supForm.open = !supForm.open; supForm.id=null; render(); break;
+    case 'cancelSupForm': supForm.open=false; supForm.id=null; render(); break;
+    case 'editSup': supForm.open=true; supForm.id=btn.dataset.id; render(); break;
+    case 'deleteSup': {
+      if(!confirm('حذف بيانات هذه المشرفة؟')) return;
+      STATE.supervisors = STATE.supervisors.filter(s=>s.id!==btn.dataset.id);
+      await saveKey('supervisors'); toast('تم الحذف'); render(); break;
+    }
+
+    case 'toggleRouteForm': routeForm.open = !routeForm.open; routeForm.id=null; render(); break;
+    case 'cancelRouteForm': routeForm.open=false; routeForm.id=null; render(); break;
+    case 'editRoute': routeForm.open=true; routeForm.id=btn.dataset.id; render(); break;
+    case 'deleteRoute': {
+      if(!confirm('حذف خط السير هذا؟')) return;
+      STATE.routes = STATE.routes.filter(r=>r.id!==btn.dataset.id);
+      await saveKey('routes'); toast('تم الحذف'); render(); break;
+    }
+    case 'saveGeneralSettings': {
+      const val = Number(document.getElementById('standardDaysInput').value)||22;
+      const alertVal = Number(document.getElementById('alertDaysInput').value)||5;
+      STATE.settings.standardDays = val;
+      STATE.settings.alertDays = alertVal;
+      await saveKey('settings'); toast('تم حفظ الإعدادات'); render(); break;
+    }
+    case 'saveGradePrices': {
+      document.querySelectorAll('.gradePriceInput').forEach(inp=>{
+        STATE.settings.gradePrices[inp.dataset.grade] = Number(inp.value)||0;
+      });
+      await saveKey('settings'); toast('تم حفظ أسعار المراحل'); render(); break;
+    }
+
+    case 'saveFamily': { const f = btn.closest('form'); if(f) await saveFamily(f); break; }
+    case 'saveStudent': { const f = btn.closest('form'); if(f) await saveStudent(f); break; }
+
+    case 'toggleRenewForm': {
+      const already = renewForm.open && renewForm.studentId===btn.dataset.student;
+      renewForm = already ? {open:false, familyId:null, studentId:null} : {open:true, familyId:btn.dataset.family, studentId:btn.dataset.student};
+      render(); break;
+    }
+    case 'cancelRenewForm': renewForm = {open:false, familyId:null, studentId:null}; render(); break;
+    case 'saveRenewal': { const f = btn.closest('form'); if(f) await saveRenewal(f); break; }
+    case 'deletePayment': {
+      if(!confirm('حذف هذه الدفعة من سجل الطالب؟')) return;
+      const fam = STATE.parents.find(f=>f.id===btn.dataset.family);
+      const st = fam && fam.students.find(s=>s.id===btn.dataset.student);
+      if(st){
+        st.payments = (st.payments||[]).filter(p=>p.id!==btn.dataset.payment);
+        await saveKey('parents'); toast('تم حذف الدفعة'); render();
+      }
+      break;
+    }
+    case 'saveDriver': { const f = btn.closest('form'); if(f) await saveDriver(f); break; }
+    case 'saveSupervisor': { const f = btn.closest('form'); if(f) await saveSupervisor(f); break; }
+    case 'saveRoute': { const f = btn.closest('form'); if(f) await saveRoute(f); break; }
+
+    case 'markPresent': await setAttendance(btn.dataset.student, btn.dataset.family, btn.dataset.route, 'present'); break;
+    case 'markAbsentToday': await setAttendance(btn.dataset.student, btn.dataset.family, btn.dataset.route, 'absent'); break;
+
+    case 'toggleStaffForm': staffForm.open = !staffForm.open; staffForm.id=null; render(); break;
+    case 'cancelStaffForm': staffForm.open=false; staffForm.id=null; render(); break;
+    case 'editStaff': staffForm.open=true; staffForm.id=btn.dataset.id; render(); break;
+    case 'deleteStaff': {
+      const target = STATE.staff.find(s=>s.id===btn.dataset.id);
+      if(target && target.role==='admin' && STATE.staff.filter(s=>s.role==='admin').length<=1){
+        toast('لازم يفضل مدير واحد على الأقل في النظام', true); break;
+      }
+      if(!confirm('حذف هذا العضو من الفريق؟ لن يقدر يدخل النظام بعدها.')) return;
+      STATE.staff = STATE.staff.filter(s=>s.id!==btn.dataset.id);
+      await saveKey('staff'); toast('تم حذف العضو'); render(); break;
+    }
+    case 'saveStaff': { const f = btn.closest('form'); if(f) await saveStaff(f); break; }
+
+    case 'reportView': {
+      reportsState.view = btn.dataset.view;
+      if(reportsState.view==='date'){
+        main.innerHTML = '<div class="loading">جارِ تحميل بيانات الحضور...</div>';
+        await loadDateReport(reportsState.date || todayISO());
+      }
+      render();
+      break;
+    }
+    case 'printReport': window.print(); break;
+
+    case 'logout': logout(); break;
+  }
+});
+
+main.addEventListener('change', (ev)=>{
+  const t = ev.target;
+  // auto-suggest student price from grade
+  if(t.name==='grade' && t.closest('#studentFormEl')){
+    const price = STATE.settings.gradePrices[t.value];
+    const priceInput = document.getElementById('studentPriceInput');
+    if(price!==undefined && priceInput && (!priceInput.value || priceInput.dataset.autofilled==='1')){
+      priceInput.value = price;
+      priceInput.dataset.autofilled = '1';
+    }
+  }
+  if((t.name==='routeId' || t.name==='type' || t.name==='workDays' || t.id==='driverManual') && t.closest('#driverFormEl')){
+    syncSalaryPreview();
+  }
+  if((t.name==='routeId' || t.name==='type' || t.name==='workDays' || t.id==='supManual') && t.closest('#supFormEl')){
+    syncSalaryPreview();
+  }
+});
+main.addEventListener('input', (ev)=>{
+  const t = ev.target;
+  if(t.name==='workDays' && t.closest('#driverFormEl')) syncSalaryPreview();
+  if(t.name==='workDays' && t.closest('#supFormEl')) syncSalaryPreview();
+  if(t.id==='studentPriceInput') t.dataset.autofilled='0';
+
+  if(t.id==='parentSearch' || t.id==='parentFilterRoute') applyFamilyFilter();
+});
+main.addEventListener('change', async (ev)=>{
+  if(ev.target.id==='parentFilterRoute') applyFamilyFilter();
+  if(ev.target.id==='attendanceDate'){
+    main.innerHTML = '<div class="loading">جارِ تحميل بيانات الحضور...</div>';
+    await loadAttendanceForDate(ev.target.value);
+    render();
+  }
+  if(ev.target.id==='attendanceRouteFilter'){
+    attendanceState.routeFilter = ev.target.value;
+    render();
+  }
+  if(ev.target.id==='reportRouteSelect'){ reportsState.routeId = ev.target.value; render(); }
+  if(ev.target.id==='reportMonthInput'){ reportsState.month = ev.target.value; render(); }
+  if(ev.target.id==='reportStudentSelect'){ reportsState.studentId = ev.target.value; render(); }
+  if(ev.target.id==='reportDuesMonth'){ reportsState.duesMonth = ev.target.value; render(); }
+  if(ev.target.id==='reportDuesPlan'){ reportsState.duesPlan = ev.target.value; render(); }
+  if(ev.target.id==='reportDate'){
+    main.innerHTML = '<div class="loading">جارِ تحميل بيانات الحضور...</div>';
+    await loadDateReport(ev.target.value);
+    render();
+  }
+});
+
+function applyFamilyFilter(){
+  const search = document.getElementById('parentSearch');
+  const filterRoute = document.getElementById('parentFilterRoute');
+  if(!search || !filterRoute) return;
+  const q = (search.value||'').toLowerCase();
+  const rid = filterRoute.value;
+  document.querySelectorAll('.family-card').forEach(card=>{
+    const matchesQ = card.dataset.name.includes(q);
+    const routes = (card.dataset.routes||'').split(',');
+    const matchesR = !rid || routes.includes(rid);
+    card.style.display = (matchesQ && matchesR) ? '' : 'none';
+  });
+}
+
+/* ---- Save functions: called directly from button clicks (reliable even
+   inside sandboxed iframes that may silently block native form submission) ---- */
+async function saveFamily(form){
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+  const errEl = document.getElementById('familyFormError');
+  if(!data.parentName || !data.parentName.trim()){
+    errEl.textContent = 'من فضلك اكتب اسم ولي الأمر.'; errEl.classList.add('show'); return;
+  }
+  errEl.classList.remove('show');
+  const id = form.dataset.id;
+  if(id){
+    const idx = STATE.parents.findIndex(f=>f.id===id);
+    STATE.parents[idx] = {...STATE.parents[idx], ...data};
+  } else {
+    STATE.parents.push({id:uid(), ...data, students:[]});
+  }
+  const ok = await saveKey('parents');
+  if(ok){ familyForm.open=false; familyForm.id=null; toast('تم حفظ بيانات ولي الأمر'); render(); }
+}
+
+async function saveStudent(form){
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+  const errEl = document.getElementById('studentFormError');
+  if(!data.name || !data.name.trim()){ errEl.textContent='من فضلك اكتب اسم الطالب.'; errEl.classList.add('show'); return; }
+  if(!data.grade){ errEl.textContent='من فضلك اختر المرحلة الدراسية.'; errEl.classList.add('show'); return; }
+  if(!form.dataset.student && data.subFrom && data.subTo && data.subTo < data.subFrom){
+    errEl.textContent='تاريخ نهاية الدفعة لازم يكون بعد تاريخ البداية.'; errEl.classList.add('show'); return;
+  }
+  errEl.classList.remove('show');
+
+  const familyId = form.dataset.family;
+  const fam = STATE.parents.find(f=>f.id===familyId);
+  if(!fam){ toast('تعذر إيجاد ولي الأمر', true); return; }
+
+  const studentId = form.dataset.student;
+  const payload = {
+    name: data.name.trim(), grade: data.grade, routeId: data.routeId||'', plan: data.plan||'شهري',
+    price: Number(data.price)||0, standardDays: Number(data.standardDays)||STATE.settings.standardDays
+  };
+
+  if(studentId){
+    const idx = fam.students.findIndex(s=>s.id===studentId);
+    fam.students[idx] = {...fam.students[idx], ...payload};
+  } else {
+    const payments = [];
+    if(data.subFrom && data.subTo){
+      payments.push({ id: uid(), amount: payload.price, from: data.subFrom, to: data.subTo, createdAt: new Date().toISOString() });
+    }
+    fam.students.push({id:uid(), ...payload, absences:[], payments});
+  }
+  const ok = await saveKey('parents');
+  if(ok){
+    studentForm = {open:false, familyId:null, studentId:null};
+    toast('تم حفظ بيانات الطالب');
+    render();
+  }
+}
+
+async function saveRenewal(form){
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+  const errEl = document.getElementById('renewFormError');
+  if(!data.amount || Number(data.amount)<=0){ errEl.textContent='من فضلك اكتب مبلغ صحيح.'; errEl.classList.add('show'); return; }
+  if(!data.from || !data.to){ errEl.textContent='من فضلك حدد فترة الاشتراك (من - إلى).'; errEl.classList.add('show'); return; }
+  if(data.to < data.from){ errEl.textContent='تاريخ النهاية لازم يكون بعد تاريخ البداية.'; errEl.classList.add('show'); return; }
+  errEl.classList.remove('show');
+
+  const fam = STATE.parents.find(f=>f.id===form.dataset.family);
+  const st = fam && fam.students.find(s=>s.id===form.dataset.student);
+  if(!st){ toast('تعذر إيجاد الطالب', true); return; }
+
+  st.payments = st.payments || [];
+  st.payments.push({ id: uid(), amount: Number(data.amount)||0, from: data.from, to: data.to, createdAt: new Date().toISOString() });
+
+  const ok = await saveKey('parents');
+  if(ok){
+    renewForm = { open:false, familyId:null, studentId:null };
+    toast('تم تسجيل الدفعة وتحديث الاشتراك');
+    render();
+  }
+}
+
+async function saveDriver(form){
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+  const errEl = document.getElementById('driverFormError');
+  if(!data.name || !data.name.trim()){ errEl.textContent='من فضلك اكتب اسم السواق.'; errEl.classList.add('show'); return; }
+  if(!data.routeId){ errEl.textContent='من فضلك اختر خط السير.'; errEl.classList.add('show'); return; }
+  errEl.classList.remove('show');
+  data.manual = document.getElementById('driverManual').checked;
+  data.workDays = Number(data.workDays)||0;
+  data.finalSalary = Number(data.finalSalary)||0;
+  const id = form.dataset.id;
+  if(id){ const idx = STATE.drivers.findIndex(d=>d.id===id); STATE.drivers[idx] = {...STATE.drivers[idx], ...data}; }
+  else { STATE.drivers.push({id:uid(), ...data}); }
+  const ok = await saveKey('drivers');
+  if(ok){ driverForm.open=false; driverForm.id=null; toast('تم حفظ بيانات السواق'); render(); }
+}
+
+async function saveSupervisor(form){
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+  const errEl = document.getElementById('supFormError');
+  if(!data.name || !data.name.trim()){ errEl.textContent='من فضلك اكتب اسم المشرفة.'; errEl.classList.add('show'); return; }
+  if(!data.routeId){ errEl.textContent='من فضلك اختر خط السير.'; errEl.classList.add('show'); return; }
+  errEl.classList.remove('show');
+  data.manual = document.getElementById('supManual').checked;
+  data.workDays = Number(data.workDays)||0;
+  data.finalSalary = Number(data.finalSalary)||0;
+  const id = form.dataset.id;
+  if(id){ const idx = STATE.supervisors.findIndex(s=>s.id===id); STATE.supervisors[idx] = {...STATE.supervisors[idx], ...data}; }
+  else { STATE.supervisors.push({id:uid(), ...data}); }
+  const ok = await saveKey('supervisors');
+  if(ok){ supForm.open=false; supForm.id=null; toast('تم حفظ بيانات المشرفة'); render(); }
+}
+
+async function saveRoute(form){
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+  const errEl = document.getElementById('routeFormError');
+  if(!data.name || !data.name.trim()){ errEl.textContent='من فضلك اكتب اسم خط السير.'; errEl.classList.add('show'); return; }
+  errEl.classList.remove('show');
+  data.priceJunior = Number(data.priceJunior)||0;
+  data.priceKG = Number(data.priceKG)||0;
+  data.priceCoverage = Number(data.priceCoverage)||0;
+  const id = form.dataset.id;
+  if(id){ const idx = STATE.routes.findIndex(r=>r.id===id); STATE.routes[idx] = {...STATE.routes[idx], ...data}; }
+  else { STATE.routes.push({id:uid(), ...data}); }
+  const ok = await saveKey('routes');
+  if(ok){ routeForm.open=false; routeForm.id=null; toast('تم حفظ خط السير'); render(); }
+}
+
+/* Thin fallback: if a native submit event ever does fire (e.g. Enter key
+   on some keyboards), route it to the same save functions instead of
+   letting the browser navigate/reload the frame. */
+main.addEventListener('submit', (ev)=>{
+  const form = ev.target.closest('form[data-form-type]');
+  if(!form) return;
+  ev.preventDefault();
+  const type = form.dataset.formType;
+  if(type==='family') saveFamily(form);
+  else if(type==='student') saveStudent(form);
+  else if(type==='renew') saveRenewal(form);
+  else if(type==='driver') saveDriver(form);
+  else if(type==='supervisor') saveSupervisor(form);
+  else if(type==='route') saveRoute(form);
+  else if(type==='staff') saveStaff(form);
+});
+
+/* =========================================================
+   INIT
+========================================================= */
+boot();
+</script>
+</body>
+</html>
